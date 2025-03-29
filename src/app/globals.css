@@ -13,7 +13,7 @@
 
 body {
   max-width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 a {
@@ -24,7 +24,7 @@ a {
 .dark {
   --bg: #0f172a;
   --textColor: #ddd;
-  --softBg: #1f273;
+  --softBg: #1f273a;
   --softTextColor: #a6a6a6;
 }
 
@@ -45,11 +45,18 @@ a {
   max-width: 1536px;
   margin-left: auto;
   margin-right: auto;
-  background-color: rebeccapurple;
+
   padding-left: 80px;
   padding-right: 80px;
 }
 
+.ql-container {
+  font-size: 28px !important;
+}
+
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  color: #b3b3b1;
+}
 @media screen and (max-width: 1536px) {
   .wrapper {
     max-width: 1366px;
