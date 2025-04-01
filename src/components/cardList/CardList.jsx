@@ -6,7 +6,7 @@ import Pagination from "../pagination/Pagination";
 import Card from "../card/Card";
 import { useSearchParams } from "next/navigation";
 
-const POSTS_PER_PAGE = 2;
+const POSTS_PER_PAGE = 10;
 
 const CardList = () => {
   const searchParams = useSearchParams();
@@ -29,20 +29,22 @@ const CardList = () => {
           throw new Error("Failed");
         }
         const data = await res.json();
+
         setPosts(data.posts);
         setCount(data.count);
       } catch (error) {
         console.error(error);
+        setPosts([]);
       }
     };
     getData();
   }, [page, cat]);
 
-  const hasPrev = page > 1;
-  const hasNext = POSTS_PER_PAGE * (page - 1) + POSTS_PER_PAGE < count;
+  const totalPages = Math.max(1, Math.ceil(count / POSTS_PER_PAGE));
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Recent Posts</h1>
+      <h1 className={styles.title}>Posts</h1>
       <div className={styles.posts}>
         {posts.length > 0 ? (
           posts.map((item) => (
@@ -54,7 +56,7 @@ const CardList = () => {
           <p>POST가 없습니다.</p>
         )}
       </div>
-      <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />
+      <Pagination page={page} totalPages={totalPages} />
     </div>
   );
 };

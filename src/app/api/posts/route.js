@@ -6,12 +6,13 @@ export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
   const cat = searchParams.get("cat") || null;
   const page = searchParams.get("page");
-  const POST_PER_PAGE = 2;
+  const POST_PER_PAGE = 10;
 
   const query = {
     take: POST_PER_PAGE,
     skip: POST_PER_PAGE * (page - 1),
     where: { ...(cat && { catSlug: cat }) },
+    orderBy: { createdAt: "desc" },
   };
   try {
     const [posts, count] = await prisma.$transaction([
