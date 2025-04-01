@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ref,
   uploadBytesResumable,
@@ -16,12 +16,42 @@ import {
 const WritePage = () => {
   const { status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const isEditing = searchParams.get("edit") === "true";
+  const editSlug = searchParams.get("slug");
+
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [media, setMedia] = useState("");
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [catSlug, setCatSlug] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isEditing && editSlug) {
+      const fetchPost = async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`/api/posts/${editSlug}`);
+          if (!res.ok) throw new Error("게시글을 불러올 수 없습니다.");
+
+          const post = await res.json();
+          setTitle(post.title);
+          setValue(post.desc);
+          setMedia(post.img || "");
+          setCatSlug(post.catSlug || "");
+        } catch (err) {
+          console.error("게시글 불러오기 실패:", err);
+          alert("게시글을 불러올 수 없습니다.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchPost();
+    }
+  }, [isEditing, editSlug]);
 
   useEffect(() => {
     const upload = () => {
@@ -56,11 +86,12 @@ const WritePage = () => {
     };
     file && upload();
   }, [file]);
-  if (status === "loading") {
+  if (status === "loading" || loading) {
     return <div className={styles.loading}>Loging...</div>;
   }
   if (status === "unauthenticated") {
     router.push("/");
+    return null;
   }
 
   const slugify = (str) =>
@@ -73,34 +104,72 @@ const WritePage = () => {
       .toLowerCase();
 
   const handleSubmit = async () => {
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      body: JSON.stringify({
-        title,
-        desc: value,
-        img: media,
-        slug: slugify(title),
-        catSlug: "travel",
-      }),
-    });
-    if (res.status === 200) {
-      const data = await res.json();
-      console.log("Created Post Data:", data); // API 응답 확인
-      if (data.slug) {
-        router.push(`/posts/${data.slug}`); // slug가 올바르면 페이지 이동
+    if (!title || !value) {
+      alert("제목과 내용을 입력해주세요.");
+      return;
+    }
+
+    try {
+      if (isEditing) {
+        // 수정 API 호출
+        const res = await fetch(`/api/posts/${editSlug}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            desc: value,
+            img: media,
+            tags: [], // 필요에 따라 추가
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "게시글 수정에 실패했습니다.");
+        }
+
+        const data = await res.json();
+        alert("게시글이 성공적으로 수정되었습니다.");
+        router.push(`/posts/${data.slug}`);
       } else {
-        console.error("Slug is missing in response data");
+        // 새 게시글 작성 API 호출
+        const res = await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            desc: value,
+            img: media,
+            slug: slugify(title),
+            catSlug: catSlug,
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "게시글 작성에 실패했습니다.");
+        }
+
+        const data = await res.json();
+        router.push(`/posts/${data.slug}`);
       }
-    } else {
-      router.push(`/posts/${data.slug}`);
+    } catch (err) {
+      console.error("Error submitting post:", err);
+      alert(err.message);
     }
   };
+
   return (
     <div className={styles.container}>
       <input
         type="text"
         placeholder="Title"
         className={styles.input}
+        value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <div className={styles.editor}>
@@ -143,7 +212,7 @@ const WritePage = () => {
         />
       </div>
       <button className={styles.publish} onClick={handleSubmit}>
-        Publish
+        {isEditing ? "수정하기" : "Publish"}
       </button>
     </div>
   );

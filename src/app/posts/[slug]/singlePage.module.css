@@ -13,6 +13,12 @@
   margin-bottom: 50px;
 }
 
+.userContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 .user {
   display: flex;
   align-items: center;
@@ -66,6 +72,55 @@
   font-size: 20px;
   font-weight: 300;
   margin-bottom: 20px;
+}
+
+.menuContainer {
+  position: relative;
+}
+
+.menuButton {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu button {
+  display: block;
+  width: 100px;
+  padding: 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background: #f5f5f5;
+}
+
+.deleteButton {
+  color: red;
 }
 
 @media screen and (max-width: 1536px) {
