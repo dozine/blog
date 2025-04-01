@@ -18,8 +18,7 @@ const Card = ({ item }) => {
           <span className={styles.category}>{item.catSlug}</span>
         </div>
         <h1>{item.title}</h1>
-        <p>{item.desc.substring(0, 60)}</p>
-
+        <p>{item.desc.replace(/<[^>]+>/g, "").substring(0, 60)}</p>
         <Link href={`/posts/${item.slug}`} className={styles.link}>
           Read More
         </Link>
