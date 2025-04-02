@@ -4,6 +4,7 @@ import styles from "./writePage.module.css";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
+import "react-quill-new/dist/quill.snow.css";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -12,6 +13,7 @@ import {
   getDownloadURL,
   getStorage,
 } from "firebase/storage";
+import { app } from "../utils/firebase";
 
 const WritePage = () => {
   const { status } = useSession();
@@ -28,6 +30,9 @@ const WritePage = () => {
   const [title, setTitle] = useState("");
   const [catSlug, setCatSlug] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
     if (isEditing && editSlug) {
@@ -50,13 +55,31 @@ const WritePage = () => {
         }
       };
       fetchPost();
+    } else if (isEditing & !editSlug) {
+      console.error("수정할 게시글의 slug가 없습니다.");
     }
   }, [isEditing, editSlug]);
 
   useEffect(() => {
     const upload = () => {
+      if (!file) return;
+
+      setUploadError("");
+      setUploadProgress(0);
+
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError("파일 크기는 5MB 이하여야 합니다.");
+        return;
+      }
+
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        setUploadError("지원되는 이미지 형식은 JPEG, PNG, GIF, WEBP입니다.");
+        return;
+      }
+
       const name = new Date().getTime() + file.name;
-      const storage = getStorage();
+      const storage = getStorage(app);
       const storageRef = ref(storage, name);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -76,15 +99,29 @@ const WritePage = () => {
               break;
           }
         },
-        (error) => {},
+        (error) => {
+          console.error("업로드 오류:", error);
+          setUploadError(
+            "이미지 업로드 중 오류가 발생했습니다: " + error.message
+          );
+        },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setMedia(downloadURL);
-          });
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              console.log("파일 업로드 완료:", downloadURL);
+              setMedia(downloadURL);
+              setUploadProgress(100);
+            })
+            .catch((err) => {
+              console.error("다운로드 URL 가져오기 실패:", err);
+              setUploadError("이미지 URL을 가져오는데 실패했습니다.");
+            });
         }
       );
     };
-    file && upload();
+    if (file) {
+      upload();
+    }
   }, [file]);
   if (status === "loading" || loading) {
     return <div className={styles.loading}>Loging...</div>;
@@ -109,6 +146,8 @@ const WritePage = () => {
       return;
     }
 
+    const finalCatSlug = catSlug || "일반";
+
     try {
       if (isEditing) {
         // 수정 API 호출
@@ -121,6 +160,7 @@ const WritePage = () => {
             title,
             desc: value,
             img: media,
+            catSlug: finalCatSlug,
             tags: [], // 필요에 따라 추가
           }),
         });
@@ -145,7 +185,7 @@ const WritePage = () => {
             desc: value,
             img: media,
             slug: slugify(title),
-            catSlug: catSlug,
+            catSlug: finalCatSlug,
           }),
         });
 
@@ -188,6 +228,7 @@ const WritePage = () => {
               id="image"
               onChange={(e) => setFile(e.target.files[0])}
               style={{ display: "none" }}
+              accept="image/*"
             />
 
             <button className={styles.addButton}>
@@ -203,6 +244,43 @@ const WritePage = () => {
             </button>
           </div>
         )}
+        {/* 업로드 상태 표시 */}
+        {file && uploadProgress < 100 && uploadProgress > 0 && (
+          <div className={styles.uploadStatus}>
+            <div className={styles.progressBar}>
+              <div
+                className={styles.progressFill}
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+            <span>{uploadProgress.toFixed(0)}% 업로드됨</span>
+          </div>
+        )}
+
+        {/* 업로드 오류 표시 */}
+        {uploadError && <div className={styles.uploadError}>{uploadError}</div>}
+
+        {/* 이미지 미리보기 */}
+        {media && (
+          <div className={styles.imagePreview}>
+            <img
+              src={media}
+              alt="업로드된 이미지"
+              style={{ maxWidth: "300px", maxHeight: "200px" }}
+            />
+            <button
+              className={styles.removeImage}
+              onClick={() => {
+                setMedia("");
+                setFile(null);
+                setUploadProgress(0);
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        )}
+
         <ReactQuill
           className={styles.textArea}
           theme="bubble"
