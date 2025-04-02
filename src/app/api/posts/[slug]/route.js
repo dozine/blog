@@ -3,7 +3,7 @@ import prisma from "@/app/utils/connect";
 import { NextResponse } from "next/server";
 //GET SINGLE POST
 export const GET = async (req, { params }) => {
-  const { slug } = params;
+  const { slug } = await params;
   try {
     const post = await prisma.post.update({
       where: { slug },
@@ -28,9 +28,8 @@ export const DELETE = async (req, { params }) => {
       JSON.stringify({ message: "Unauthorized" }, { status: 401 })
     );
   }
-
+  const { slug } = await params;
   try {
-    const { slug } = params;
     const post = await prisma.post.findUnique({
       where: { slug },
     });
@@ -66,7 +65,7 @@ export const PUT = async (req, { params }) => {
   }
 
   try {
-    const { slug } = params;
+    const { slug } = await params;
     const body = await req.json();
     const { title, desc, img, tags } = body;
 
