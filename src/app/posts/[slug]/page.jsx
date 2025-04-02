@@ -71,9 +71,14 @@ const SinglePage = () => {
           <h1 className={styles.title}>{data?.title}</h1>
           <div className={styles.userContainer}>
             <div className={styles.user}>
-              {data?.img && (
+              {data?.user?.img && (
                 <div className={styles.userImageContainer}>
-                  <Image src={data.img} alt="" fill className={styles.avatar} />
+                  <Image
+                    src={data.user.img}
+                    alt=""
+                    fill
+                    className={styles.avatar}
+                  />
                 </div>
               )}
               <div className={styles.userTextContainer}>
@@ -103,9 +108,14 @@ const SinglePage = () => {
             </div>
           </div>
         </div>
-        {data?.user?.img && (
+        {data?.img && (
           <div className={styles.imageContainer}>
-            <Image src={data?.user.img} alt="" fill className={styles.image} />
+            <Image
+              src={data.img}
+              alt="게시글 이미지"
+              fill
+              className={styles.postImage}
+            />
           </div>
         )}
       </div>
