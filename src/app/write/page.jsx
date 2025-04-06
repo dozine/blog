@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import styles from "./writePage.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
 import "react-quill-new/dist/quill.snow.css";
@@ -14,6 +14,7 @@ import {
   getStorage,
 } from "firebase/storage";
 import { app } from "../utils/firebase";
+import editorModules from "../utils/editor";
 
 const WritePage = () => {
   const { status } = useSession();
@@ -33,6 +34,7 @@ const WritePage = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
+  const quillRef = useRef(null);
 
   useEffect(() => {
     if (isEditing && editSlug) {
@@ -111,6 +113,11 @@ const WritePage = () => {
               console.log("파일 업로드 완료:", downloadURL);
               setMedia(downloadURL);
               setUploadProgress(100);
+              const quill = quillRef.current.getEditor();
+              const range = quill.getSelection(true);
+
+              quill.insertEmbed(range?.index || 0, "image", downloadURL);
+              quill.setSelection((range?.index || 0) + 1);
             })
             .catch((err) => {
               console.error("다운로드 URL 가져오기 실패:", err);
@@ -170,9 +177,8 @@ const WritePage = () => {
           throw new Error(errorData.message || "게시글 수정에 실패했습니다.");
         }
 
-        const data = await res.json();
         alert("게시글이 성공적으로 수정되었습니다.");
-        router.push(`/posts/${data.slug}`);
+        router.push(`/posts/${editSlug}`);
       } else {
         // 새 게시글 작성 API 호출
         const res = await fetch("/api/posts", {
@@ -260,33 +266,14 @@ const WritePage = () => {
         {/* 업로드 오류 표시 */}
         {uploadError && <div className={styles.uploadError}>{uploadError}</div>}
 
-        {/* 이미지 미리보기 */}
-        {media && (
-          <div className={styles.imagePreview}>
-            <img
-              src={media}
-              alt="업로드된 이미지"
-              style={{ maxWidth: "300px", maxHeight: "200px" }}
-            />
-            <button
-              className={styles.removeImage}
-              onClick={() => {
-                setMedia("");
-                setFile(null);
-                setUploadProgress(0);
-              }}
-            >
-              삭제
-            </button>
-          </div>
-        )}
-
         <ReactQuill
+          ref={quillRef}
           className={styles.textArea}
           theme="bubble"
           value={value}
           onChange={setValue}
           placeholder="Tell your story..."
+          modules={editorModules}
         />
       </div>
       <button className={styles.publish} onClick={handleSubmit}>
