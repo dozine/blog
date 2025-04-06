@@ -1,4 +1,7 @@
 .container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .editor {
@@ -49,6 +52,13 @@
 }
 .textArea {
   width: 100%;
+}
+
+.textArea {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
 }
 
 .publish {
