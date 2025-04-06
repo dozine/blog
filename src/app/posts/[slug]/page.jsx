@@ -4,6 +4,7 @@ import styles from "./singlePage.module.css";
 import Image from "next/image";
 import Comments from "@/components/comments/Comments";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const SinglePage = () => {
   const { slug } = useParams();
@@ -11,6 +12,7 @@ const SinglePage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const session = useSession();
 
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
@@ -87,37 +89,29 @@ const SinglePage = () => {
               </div>
             </div>
             {/* 메뉴 버튼 추가 */}
-            <div className={styles.menuContainer}>
-              <button
-                className={styles.menuButton}
-                onClick={() => setMenuOpen(!menuOpen)}
-              >
-                ⋮
-              </button>
-              {menuOpen && (
-                <div className={styles.menu}>
-                  .
-                  <button className={styles.menuItem} onClick={handleEdit}>
-                    수정하기
-                  </button>
-                  <button className={styles.menuItem} onClick={handleDelete}>
-                    삭제하기
-                  </button>
-                </div>
-              )}
-            </div>
+            {session?.user?.email === data?.userEmail && (
+              <div className={styles.menuContainer}>
+                <button
+                  className={styles.menuButton}
+                  onClick={() => setMenuOpen(!menuOpen)}
+                >
+                  ⋮
+                </button>
+                {menuOpen && (
+                  <div className={styles.menu}>
+                    .
+                    <button className={styles.menuItem} onClick={handleEdit}>
+                      수정하기
+                    </button>
+                    <button className={styles.menuItem} onClick={handleDelete}>
+                      삭제하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
-        {data?.img && (
-          <div className={styles.imageContainer}>
-            <Image
-              src={data.img}
-              alt="게시글 이미지"
-              fill
-              className={styles.postImage}
-            />
-          </div>
-        )}
       </div>
       <div className={styles.content}>
         <div className={styles.post}>
@@ -125,10 +119,6 @@ const SinglePage = () => {
             className={styles.description}
             dangerouslySetInnerHTML={{ __html: data?.desc }}
           />
-
-          <div className={styles.comment}>
-            <Comments postSlug={slug} />
-          </div>
         </div>
       </div>
     </div>
