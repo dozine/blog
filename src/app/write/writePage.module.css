@@ -61,6 +61,35 @@
   margin: 20px auto;
 }
 
+.select {
+  width: 200px;
+  padding: 10px 15px;
+  margin: 0 50px;
+  font-size: 16px;
+  border: 1px solid var(--textColor);
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--textColor);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+.select:hover {
+  border-color: #1a8917;
+}
+
+.select:focus {
+  border-color: #1a8917;
+  box-shadow: 0 0 0 2px rgba(26, 137, 23, 0.2);
+}
+
+.select option {
+  background-color: var(--bg);
+  color: var(--textColor);
+  padding: 10px;
+}
+
 .publish {
   position: absolute;
   top: 30px;

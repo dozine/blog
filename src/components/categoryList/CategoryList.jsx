@@ -1,48 +1,266 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import styles from "./categoryList.module.css";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import styles from "./CategoryList.module.css";
+import AddCategoryModal from "../categoryModal/AddCategoryModal";
+import DeleteCategoryModal from "../categoryModal/DeleteCategoryModal";
 
 const CategoryList = () => {
+  const session = useSession();
   const [categories, setCategories] = useState([]);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/categories", {
-          cache: "no-store",
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const sliderRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/categories");
+      if (!res.ok) {
+        throw new Error("카테고리를 불러오는데 실패했습니다");
+      }
+      const data = await res.json();
+
+      // Uncategorized 카테고리가 있는지 확인
+      let hasUncategorized = data.some((cat) => cat.slug === "uncategorized");
+
+      // Uncategorized 카테고리가 없으면 생성 요청
+      if (!hasUncategorized && session?.status === "authenticated") {
+        await fetch("/api/categories", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            slug: "uncategorized",
+            title: "미분류",
+            img: null,
+          }),
         });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch categories");
+        // 다시 카테고리 불러오기
+        const refreshRes = await fetch("/api/categories");
+        if (refreshRes.ok) {
+          const refreshData = await refreshRes.json();
+          setCategories(refreshData);
+          return;
         }
-        const data = await res.json();
-        setCategories(data);
-      } catch (error) {
-        console.error(error);
       }
-    };
 
-    getData();
+      setCategories(data);
+    } catch (err) {
+      console.error("카테고리 로딩 오류:", err);
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
+
+  const handleAdd = async (categoryData) => {
+    try {
+      const title = categoryData;
+      const slug = categoryData
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+      setIsLoading(true);
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, slug }),
+      });
+
+      if (!res.ok) {
+        throw new Error("카테고리 추가 실패");
+      }
+
+      await fetchCategories();
+      setIsAddModalOpen(false);
+      return { success: true };
+    } catch (error) {
+      console.error("카테고리 추가 오류:", error);
+      setError(error.message);
+      return { success: false, error: error.message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (categoryId) => {
+    try {
+      setIsLoading(true);
+
+      // 선택한 카테고리가 Uncategorized인지 확인
+      const selectedCategory = categories.find((cat) => cat.id === categoryId);
+      if (selectedCategory && selectedCategory.slug === "uncategorized") {
+        throw new Error("'미분류' 카테고리는 삭제할 수 없습니다");
+      }
+
+      const res = await fetch(`/api/categories?id=${categoryId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("삭제 응답 에러:", res.status, errorData);
+        throw new Error(
+          errorData.message || `카테고리 삭제 실패 (${res.status})`
+        );
+      }
+
+      const data = await res.json();
+      console.log("삭제 성공 응답:", data);
+
+      await fetchCategories();
+      setIsDeleteModalOpen(false);
+      return { success: true };
+    } catch (error) {
+      console.error("카테고리 삭제 오류:", error);
+      setError(error.message || "카테고리 삭제 중 문제가 발생했습니다");
+      return { success: false, error: error.message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 슬라이더 컨트롤 함수들
+  const scrollLeftHandler = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollLeft -= 200;
+    }
+  };
+
+  const scrollRightHandler = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollLeft += 200;
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Categories</h1>
-      <div className={styles.categories}>
-        {categories?.map((item) => {
-          return (
-            <Link
-              href={`/blog?cat=${item.slug}`}
-              className={`${styles.category} ${styles[item.slug]}`}
-              key={item._id || item.id}
+      {session?.status === "authenticated" && (
+        <div className={styles.menuContainer}>
+          <div className={styles.menuWrapper}>
+            <button
+              className={styles.menuButton}
+              onClick={() => setMenuOpen(!menuOpen)}
             >
-              {item.title}
+              카테고리 관리
+            </button>
+            {menuOpen && (
+              <div className={styles.menu}>
+                <button onClick={() => setIsAddModalOpen(true)}>
+                  추가하기
+                </button>
+                <button onClick={() => setIsDeleteModalOpen(true)}>
+                  삭제하기
+                </button>
+                <AddCategoryModal
+                  isOpen={isAddModalOpen}
+                  onClose={() => setIsAddModalOpen(false)}
+                  onAdd={handleAdd}
+                />
+
+                <DeleteCategoryModal
+                  isOpen={isDeleteModalOpen}
+                  onClose={() => setIsDeleteModalOpen(false)}
+                  onDelete={handleDelete}
+                  categories={categories}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {error && <div className={styles.error}>{error}</div>}
+
+      <div className={styles.sliderContainer}>
+        <button
+          className={styles.navButton}
+          onClick={scrollLeftHandler}
+        ></button>
+        <div
+          className={styles.categoriesSlider}
+          ref={sliderRef}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleMouseUp}
+          onTouchMove={handleTouchMove}
+        >
+          <div className={styles.categories}>
+            <Link href="/blog" className={styles.category}>
+              All{" "}
             </Link>
-          );
-        })}
+            {categories?.map((item) => {
+              return (
+                <Link
+                  href={`/blog?cat=${item.slug}`}
+                  className={`${styles.category} ${
+                    item.slug === "uncategorized" ? styles.uncategorized : ""
+                  }`}
+                  key={item._id || item.id}
+                >
+                  {item.title}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        <button
+          className={styles.navButton}
+          onClick={scrollRightHandler}
+        ></button>
       </div>
     </div>
   );
 };
+
 export default CategoryList;
