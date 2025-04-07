@@ -36,6 +36,9 @@ const WritePage = () => {
   const [uploadError, setUploadError] = useState("");
   const quillRef = useRef(null);
 
+  const [selectedCat, setSelectedCat] = useState("");
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     if (isEditing && editSlug) {
       const fetchPost = async () => {
@@ -57,10 +60,23 @@ const WritePage = () => {
         }
       };
       fetchPost();
-    } else if (isEditing & !editSlug) {
+    } else if (isEditing && !editSlug) {
       console.error("수정할 게시글의 slug가 없습니다.");
     }
   }, [isEditing, editSlug]);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error("카테고리 가져오기 실패:", err);
+      }
+    };
+    getCategories();
+  }, []);
 
   useEffect(() => {
     const upload = () => {
@@ -218,6 +234,18 @@ const WritePage = () => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      <select
+        className={styles.select}
+        value={catSlug}
+        onChange={(e) => setCatSlug(e.target.value)}
+      >
+        <option value="">카테고리</option>
+        {categories.map((cat) => (
+          <option key={cat.slug} value={cat.slug}>
+            {cat.title}
+          </option>
+        ))}
+      </select>
       <div className={styles.editor}>
         <button
           className={styles.button}
