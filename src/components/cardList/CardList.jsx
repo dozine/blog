@@ -44,7 +44,7 @@ const CardList = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Posts</h1>
+      <h1 className={styles.title}>Post</h1>
       <div className={styles.posts}>
         {posts.length > 0 ? (
           posts.map((item) => (

@@ -89,7 +89,7 @@ const SinglePage = () => {
               </div>
             </div>
             {/* 메뉴 버튼 추가 */}
-            {session?.user?.email === data?.userEmail && (
+            {session.status === "authenticated" && (
               <div className={styles.menuContainer}>
                 <button
                   className={styles.menuButton}

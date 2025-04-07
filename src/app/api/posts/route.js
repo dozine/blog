@@ -20,7 +20,7 @@ export const GET = async (req) => {
       prisma.post.count({ where: query.where }),
     ]);
 
-    return new NextResponse(JSON.stringify({ posts, count }, { status: 200 }));
+    return new NextResponse(JSON.stringify({ posts, count }), { status: 200 });
   } catch (err) {
     console.log(err);
     return new NextResponse(
@@ -32,6 +32,7 @@ export const GET = async (req) => {
 //CREATE A POST
 export const POST = async (req) => {
   const session = await getAuthSession();
+
   if (!session) {
     return new NextResponse(
       JSON.stringify({ message: "Not Authenticate" }, { status: 401 })
@@ -40,6 +41,11 @@ export const POST = async (req) => {
 
   try {
     const body = await req.json();
+    const safeImg = Array.isArray(body.img)
+      ? body.img
+      : body.img
+        ? [body.img]
+        : [];
     console.log("Received Post Data:", body);
     if (!body.slug || !body.title) {
       return new NextResponse(
@@ -48,7 +54,7 @@ export const POST = async (req) => {
     }
 
     const post = await prisma.post.create({
-      data: { ...body, userEmail: session.user.email },
+      data: { ...body, img: safeImg, userEmail: session.user.email },
     });
     console.log("Created Post:", post);
 
