@@ -4,26 +4,29 @@ import Link from "next/link";
 
 const Card = ({ item }) => {
   return (
-    <div className={styles.container}>
-      {item.img && (
-        <div className={styles.imageContainer}>
-          <Image src={item.img} alt="" fill className={styles.image} />
+    <Link href={`/posts/${item.slug}`}>
+      <div className={styles.container}>
+        <div className={styles.textContainer}>
+          <div className={styles.detail}>
+            <span className={styles.date}>
+              {item.createdAt.substring(0, 10)} -{" "}
+            </span>
+            <span className={styles.category}>{item.catSlug}</span>
+          </div>
+          <div className={styles.titleContainer}>
+            <h1>{item.title}</h1>
+          </div>
+          <p>{item.desc.replace(/<[^>]+>/g, "").substring(0, 60)}</p>
         </div>
-      )}
-      <div className={styles.textContainer}>
-        <div className={styles.detail}>
-          <span className={styles.date}>
-            {item.createdAt.substring(0, 10)} -{" "}
-          </span>
-          <span className={styles.category}>{item.catSlug}</span>
-        </div>
-        <h1>{item.title}</h1>
-        <p>{item.desc.replace(/<[^>]+>/g, "").substring(0, 60)}</p>
-        <Link href={`/posts/${item.slug}`} className={styles.link}>
-          Read More
-        </Link>
+        {item.img && item.img.length > 0 && item.img[0] !== "" && (
+          <div className={styles.imageContainer}>
+            <div className={styles.image}>
+              <Image src={item.img} alt="" fill />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </Link>
   );
 };
 
