@@ -11,13 +11,14 @@ const Navbar = () => {
   const session = useSession();
   return (
     <div className={styles.container}>
-      <div className={styles.social}></div>
       <Link href="/" className={styles.logo}>
         zindozang
       </Link>
       <div className={styles.links}>
-        <ThemeToggle />
+        <Link href="/">Tags</Link>
+        <Link href="/">About</Link>
         {session.status === "authenticated" && <AuthLinks />}
+        <ThemeToggle />
       </div>
     </div>
   );
