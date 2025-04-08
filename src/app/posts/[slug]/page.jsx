@@ -5,6 +5,7 @@ import Image from "next/image";
 import Comments from "@/components/comments/Comments";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import PostDeleteModal from "@/components/modal/PostDeleteModal";
 
 const SinglePage = () => {
   const { slug } = useParams();
@@ -15,16 +16,15 @@ const SinglePage = () => {
   const session = useSession();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   useEffect(() => {
     if (!slug) return;
     const getData = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/posts/${slug}?popular=true`,
-          {
-            cache: "no-store",
-          }
-        );
+        const res = await fetch(`/api/posts/${slug}?popular=true`, {
+          cache: "no-store",
+        });
         if (!res.ok) {
           throw new Error("Failed!");
         }
@@ -49,7 +49,7 @@ const SinglePage = () => {
   const handleDelete = async () => {
     if (!slug) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/posts/${slug}`, {
+      const res = await fetch(`/api/posts/${slug}`, {
         method: "DELETE",
         cache: "no-store",
       });
@@ -85,7 +85,7 @@ const SinglePage = () => {
               )}
               <div className={styles.userTextContainer}>
                 <span className={styles.username}>{data?.user.name}</span>
-                <span className={styles.date}>01.01.2024</span>
+                <span className={styles.date}>{data.createdAt}</span>
               </div>
             </div>
             {/* 메뉴 버튼 추가 */}
@@ -103,9 +103,17 @@ const SinglePage = () => {
                     <button className={styles.menuItem} onClick={handleEdit}>
                       수정하기
                     </button>
-                    <button className={styles.menuItem} onClick={handleDelete}>
+                    <button
+                      className={styles.menuItem}
+                      onClick={() => setIsDeleteModalOpen(true)}
+                    >
                       삭제하기
                     </button>
+                    <PostDeleteModal
+                      isOpen={isDeleteModalOpen}
+                      onClose={() => setIsDeleteModalOpen(false)}
+                      onDelete={handleDelete}
+                    />
                   </div>
                 )}
               </div>

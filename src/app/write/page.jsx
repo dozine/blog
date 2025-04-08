@@ -169,7 +169,7 @@ const WritePage = () => {
       return;
     }
 
-    const finalCatSlug = catSlug || "일반";
+    const finalCatSlug = catSlug || "uncategorized";
 
     try {
       if (isEditing) {
