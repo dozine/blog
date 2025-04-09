@@ -66,6 +66,10 @@ const SinglePage = () => {
     router.push(`/write?edit=true&slug=${slug}`);
   };
 
+  const handleTagClick = (tagName) => {
+    router.push(`/tags?tags=${tagName}`);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
@@ -119,6 +123,21 @@ const SinglePage = () => {
               </div>
             )}
           </div>
+
+          {/* 태그 섹션 추가 */}
+          {data?.tags && data.tags.length > 0 && (
+            <div className={styles.tagContainer}>
+              {data.tags.map((tag) => (
+                <span
+                  key={tag.id || tag.name}
+                  className={styles.tag}
+                  onClick={() => handleTagClick(tag.name)}
+                >
+                  #{tag.name}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className={styles.content}>
