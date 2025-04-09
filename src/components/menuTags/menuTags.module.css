@@ -1,0 +1,78 @@
+.container {
+  margin: 1rem 0;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tagGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.tag:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+  transform: translateY(-2px);
+}
+
+.viewMoreContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.viewMoreLink {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: white;
+  color: #4b5563;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.viewMoreBtn {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.viewMoreLink:hover,
+.viewMoreBtn:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.arrow {
+  margin-left: 0.25rem;
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .container {
+    display: none;
+  }
+}
