@@ -145,3 +145,115 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+.metaContainer {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tagsContainer {
+  flex: 1;
+  position: relative;
+}
+
+.tagInputWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.tagInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+  font-size: 16px;
+}
+
+.tagInput:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.addTagButton {
+  margin-left: 5px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.addTagButton:hover {
+  background-color: #0056b3;
+}
+
+.tagSuggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 10;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tagSuggestion {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.tagSuggestion:hover {
+  background-color: #f5f5f5;
+}
+
+.selectedTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tagBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: #e9f5ff;
+  color: #007bff;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 16px;
+  padding: 0 2px;
+}
+
+.removeTagButton:hover {
+  color: #0056b3;
+}
+
+@media screen and (max-width: 768px) {
+  .metaContainer {
+    flex-direction: column;
+  }
+
+  .select,
+  .tagsContainer {
+    width: 100%;
+  }
+}
