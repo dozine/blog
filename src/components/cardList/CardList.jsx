@@ -12,25 +12,35 @@ const CardList = () => {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const cat = searchParams.get("cat") || "";
-
+  const rawTags = searchParams.get("tags") || "";
+  const tags = rawTags ? rawTags.split(",").filter((tag) => tag !== "") : [];
+  console.log("rawTags:", rawTags);
+  console.log("tags:", tags);
   const [posts, setPosts] = useState([]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/posts?page=${page}&cat=${cat || ""}`,
-          {
-            cache: "no-store",
-          }
-        );
+        let apiUrl = `/api/posts?page=${page}&cat=${cat || ""}`;
+
+        if (tags.length > 0) {
+          apiUrl += `&tags=${tags.join(".")}`;
+        }
+        const res = await fetch(apiUrl, {
+          cache: "no-store",
+        });
         if (!res.ok) {
           throw new Error("Failed");
         }
         const data = await res.json();
 
-        setPosts(data.posts);
+        const postsWithFormattedTags = data.posts.map((post) => ({
+          ...post,
+          tags: post.tags?.map((pt) => pt.tag) || [], // PostTag 관계 객체에서 실제 태그 객체만 추출
+        }));
+        console.log("원본 post:", data.posts);
+        setPosts(postsWithFormattedTags);
         setCount(data.count);
       } catch (error) {
         console.error(error);
@@ -38,7 +48,7 @@ const CardList = () => {
       }
     };
     getData();
-  }, [page, cat]);
+  }, [page, cat, JSON.stringify(tags)]);
 
   const totalPages = Math.max(1, Math.ceil(count / POSTS_PER_PAGE));
 
