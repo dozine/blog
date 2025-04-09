@@ -147,6 +147,32 @@
   color: red;
 }
 
+/* 기존 CSS에 이 부분을 추가하세요 */
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
 @media screen and (max-width: 1536px) {
   .title {
     font-size: 54px;

@@ -15,7 +15,7 @@ const Navbar = () => {
         zindozang
       </Link>
       <div className={styles.links}>
-        <Link href="/">Tags</Link>
+        <Link href="/tags">Tags</Link>
         <Link href="/">About</Link>
         {session.status === "authenticated" && <AuthLinks />}
         <ThemeToggle />

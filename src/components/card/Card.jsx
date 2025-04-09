@@ -17,14 +17,26 @@ const Card = ({ item }) => {
             <h1>{item.title}</h1>
           </div>
           <p>{item.desc.replace(/<[^>]+>/g, "").substring(0, 60)}</p>
-        </div>
-        {item.img && item.img.length > 0 && item.img[0] !== "" && (
-          <div className={styles.imageContainer}>
-            <div className={styles.image}>
-              <Image src={item.img} alt="" fill />
+          {console.log("Card received tags:", item.tags)}
+          {item.tags && Array.isArray(item.tags) && item.tags.length > 0 && (
+            <div className={styles.tagContainer}>
+              {item.tags.map((tag) => (
+                <span key={tag.id} className={styles.tag}>
+                  {tag.name}
+                </span>
+              ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+        {Array.isArray(item.img) &&
+          item.img.length > 0 &&
+          item.img[0].trim() !== "" && (
+            <div className={styles.imageContainer}>
+              <div className={styles.image}>
+                <Image src={item.img[0]} alt="" fill />
+              </div>
+            </div>
+          )}
       </div>
     </Link>
   );
