@@ -5,14 +5,43 @@ import { NextResponse } from "next/server";
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
   const cat = searchParams.get("cat") || null;
-  const page = searchParams.get("page");
+  const tagsParam = searchParams.get("tags");
+  const pageParam = searchParams.get("page");
   const POST_PER_PAGE = 10;
+
+  const page = pageParam ? parseInt(pageParam, 10) : 1;
+  const skip = Math.max(0, POST_PER_PAGE * (page - 1));
+
+  const selectedTags = tagsParam ? tagsParam.split(".") : [];
+
+  const where = {
+    ...(cat && { catSlug: cat }),
+    ...(selectedTags.length > 0 && {
+      OR: selectedTags.map((tagName) => ({
+        tags: {
+          some: {
+            tag: {
+              name: tagName,
+            },
+          },
+        },
+      })),
+    }),
+  };
 
   const query = {
     take: POST_PER_PAGE,
-    skip: POST_PER_PAGE * (page - 1),
-    where: { ...(cat && { catSlug: cat }) },
+    skip: skip,
+    where,
     orderBy: { createdAt: "desc" },
+    include: {
+      user: true,
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
   };
   try {
     const [posts, count] = await prisma.$transaction([
@@ -20,7 +49,9 @@ export const GET = async (req) => {
       prisma.post.count({ where: query.where }),
     ]);
 
-    return new NextResponse(JSON.stringify({ posts, count }), { status: 200 });
+    return new NextResponse(JSON.stringify({ posts, count }), {
+      status: 200,
+    });
   } catch (err) {
     console.log(err);
     return new NextResponse(
@@ -41,24 +72,63 @@ export const POST = async (req) => {
 
   try {
     const body = await req.json();
+    const { tags: tagIds, ...postData } = body;
     const safeImg = Array.isArray(body.img)
       ? body.img
       : body.img
         ? [body.img]
         : [];
     console.log("Received Post Data:", body);
+
     if (!body.slug || !body.title) {
       return new NextResponse(
         JSON.stringify({ message: "Missing slug or title" }, { status: 400 })
       );
     }
 
-    const post = await prisma.post.create({
-      data: { ...body, img: safeImg, userEmail: session.user.email },
-    });
-    console.log("Created Post:", post);
+    const result = await prisma.$transaction(async (tx) => {
+      // 먼저 게시글 생성
+      const post = await tx.post.create({
+        data: {
+          ...postData,
+          img: safeImg,
+          userEmail: session.user.email,
+        },
+      });
 
-    return new NextResponse(JSON.stringify(post, { status: 200 }));
+      // 태그가 있으면 PostTag 관계 생성
+      if (tagIds && Array.isArray(tagIds) && tagIds.length > 0) {
+        for (const tagId of tagIds) {
+          await tx.postTag.create({
+            data: {
+              postId: post.id,
+              tagId: tagId,
+            },
+          });
+        }
+      }
+
+      return await tx.post.findUnique({
+        where: { id: post.id },
+        include: {
+          user: true,
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+    });
+
+    const formattedResult = {
+      ...result,
+      tags: result.tags.map((pt) => pt.tag),
+    };
+
+    console.log("Created Post:", formattedResult);
+
+    return new NextResponse(JSON.stringify(formattedResult), { status: 200 });
   } catch (err) {
     console.log("Error creating post:", err);
     return new NextResponse(
