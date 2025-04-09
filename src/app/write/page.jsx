@@ -32,6 +32,13 @@ const WritePage = () => {
   const [catSlug, setCatSlug] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+  const [filteredTags, setFilteredTags] = useState([]);
+  const tagInputRef = useRef(null);
+
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
   const quillRef = useRef(null);
@@ -52,6 +59,10 @@ const WritePage = () => {
           setValue(post.desc);
           setMedia(post.img || "");
           setCatSlug(post.catSlug || "");
+
+          if (post.tags && Array.isArray(post.tags)) {
+            setTags(post.tags);
+          }
         } catch (err) {
           console.error("게시글 불러오기 실패:", err);
           alert("게시글을 불러올 수 없습니다.");
@@ -77,6 +88,34 @@ const WritePage = () => {
     };
     getCategories();
   }, []);
+
+  useEffect(() => {
+    const fetchAvailableTags = async () => {
+      try {
+        const res = await fetch("/api/tags");
+        if (!res.ok) throw new Error("태그를 불러올 수 없습니다.");
+
+        const data = await res.json();
+        setAvailableTags(data);
+      } catch (err) {
+        console.error("태그 불러오기 실패:", err);
+      }
+    };
+    fetchAvailableTags();
+  }, []);
+
+  useEffect(() => {
+    if (tagInput.trim()) {
+      const filtered = availableTags.filter(
+        (tag) =>
+          tag.name.toLowerCase().includes(tagInput.toLowerCase()) &&
+          !tags.some((selectedTag) => selectedTag.id === tag.id)
+      );
+      setFilteredTags(filtered);
+    } else {
+      setFilteredTags([]);
+    }
+  }, [tagInput, availableTags, tags]);
 
   useEffect(() => {
     const upload = () => {
@@ -154,6 +193,66 @@ const WritePage = () => {
     return null;
   }
 
+  const addTag = (tag) => {
+    if (tags.length >= 5) {
+      alert("태그는 최대 5개까지만 추가할 수 있습니다.");
+      return;
+    }
+
+    if (tag && !tags.some((t) => t.id === tag.id)) {
+      setTags([...tags, tag]);
+    }
+
+    setTagInput("");
+    setShowTagSuggestions(false);
+    tagInputRef.current?.focus();
+  };
+
+  // 새 태그 생성 함수
+  const createNewTag = async () => {
+    if (!tagInput.trim()) return;
+    if (tags.length >= 5) {
+      alert("태그는 최대 5개까지만 추가할 수 있습니다.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/tags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: tagInput.trim() }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
+        if (res.status === 409) {
+          const existingTag = availableTags.find(
+            (tag) => tag.name.toLowerCase() === tagInput.toLowerCase()
+          );
+          if (existingTag) {
+            addTag(existingTag);
+            return;
+          }
+        }
+        throw new Error(errorData.message || "태그 생성에 실패했습니다.");
+      }
+
+      const newTag = await res.json();
+      addTag(newTag);
+      setAvailableTags([...availableTags, newTag]);
+    } catch (err) {
+      console.error("태그 생성 실패:", err);
+      alert(err.message);
+    }
+  };
+
+  const removeTag = (tagId) => {
+    setTags(tags.filter((tag) => tag.id !== tagId));
+  };
+
   const slugify = (str) =>
     str
       .normalize("NFC")
@@ -170,6 +269,7 @@ const WritePage = () => {
     }
 
     const finalCatSlug = catSlug || "uncategorized";
+    const tagIds = tags.map((tag) => tag.id);
 
     try {
       if (isEditing) {
@@ -184,7 +284,7 @@ const WritePage = () => {
             desc: value,
             img: media,
             catSlug: finalCatSlug,
-            tags: [], // 필요에 따라 추가
+            tags: tagIds, // 필요에 따라 추가
           }),
         });
 
@@ -208,6 +308,7 @@ const WritePage = () => {
             img: media,
             slug: slugify(title),
             catSlug: finalCatSlug,
+            tags: tagIds,
           }),
         });
 
@@ -217,6 +318,7 @@ const WritePage = () => {
         }
 
         const data = await res.json();
+        console.log("slug after submit:", data.slug);
         router.push(`/posts/${data.slug}`);
       }
     } catch (err) {
@@ -234,18 +336,85 @@ const WritePage = () => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <select
-        className={styles.select}
-        value={catSlug}
-        onChange={(e) => setCatSlug(e.target.value)}
-      >
-        <option value="">카테고리</option>
-        {categories.map((cat) => (
-          <option key={cat.slug} value={cat.slug}>
-            {cat.title}
-          </option>
-        ))}
-      </select>
+      <div className={styles.metaContainer}>
+        <select
+          className={styles.select}
+          value={catSlug}
+          onChange={(e) => setCatSlug(e.target.value)}
+        >
+          <option value="">카테고리</option>
+          {categories.map((cat) => (
+            <option key={cat.slug} value={cat.slug}>
+              {cat.title}
+            </option>
+          ))}
+        </select>
+
+        <div className={styles.tagsContainer}>
+          <div className={styles.tagInputWrapper}>
+            <input
+              ref={tagInputRef}
+              type="text"
+              placeholder={
+                tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"
+              }
+              className={styles.tagInput}
+              value={tagInput}
+              onChange={(e) => {
+                setTagInput(e.target.value);
+                setShowTagSuggestions(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (filteredTags.length > 0) {
+                    addTag(filteredTags[0]);
+                  } else if (tagInput.trim()) {
+                    createNewTag();
+                  }
+                }
+              }}
+              disabled={tags.length >= 5}
+            />
+            {tags.length < 5 && tagInput && (
+              <button className={styles.addTagButton} onClick={createNewTag}>
+                +
+              </button>
+            )}
+          </div>
+
+          {/* 태그 제안 목록 */}
+          {showTagSuggestions && filteredTags.length > 0 && (
+            <div className={styles.tagSuggestions}>
+              {filteredTags.slice(0, 5).map((tag) => (
+                <div
+                  key={tag.id}
+                  className={styles.tagSuggestion}
+                  onClick={() => addTag(tag)}
+                >
+                  {tag.name}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 선택된 태그 표시 */}
+          <div className={styles.selectedTags}>
+            {tags.map((tag) => (
+              <span key={tag.id} className={styles.tagBadge}>
+                {tag.name}
+                <button
+                  className={styles.removeTagButton}
+                  onClick={() => removeTag(tag.id)}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className={styles.editor}>
         <button
           className={styles.button}

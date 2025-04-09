@@ -7,6 +7,7 @@ import CardList from "@/components/cardList/CardList";
 import Menu from "@/components/menu/Menu";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import RecentPosts from "@/components/recentPosts/RecentPosts";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ export default function Home() {
       <Featured />
       <CategoryList />
       <div className={styles.content}>
-        <CardList page={page} />
+        <RecentPosts page={page} />
       </div>
     </div>
   );
