@@ -90,6 +90,16 @@ const SinglePage = () => {
               <div className={styles.userTextContainer}>
                 <span className={styles.username}>{data?.user.name}</span>
                 <span className={styles.date}>{data.createdAt}</span>
+                {session.status === "authenticated" &&
+                  session.data?.user?.email === data?.user?.email && (
+                    <div className={styles.status}>
+                      {data.isPublished ? (
+                        <span className={styles.published}>공개</span>
+                      ) : (
+                        <span className={styles.unpublished}>비공개</span>
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
             {/* 메뉴 버튼 추가 */}

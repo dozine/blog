@@ -46,6 +46,7 @@ const WritePage = () => {
   const [selectedCat, setSelectedCat] = useState("");
   const [categories, setCategories] = useState([]);
 
+  const [isPublished, setIsPublished] = useState(false);
   useEffect(() => {
     if (isEditing && editSlug) {
       const fetchPost = async () => {
@@ -59,6 +60,7 @@ const WritePage = () => {
           setValue(post.desc);
           setMedia(post.img || "");
           setCatSlug(post.catSlug || "");
+          setIsPublished(Boolean(post.isPublished));
 
           if (post.tags && Array.isArray(post.tags)) {
             setTags(post.tags);
@@ -285,6 +287,7 @@ const WritePage = () => {
             img: media,
             catSlug: finalCatSlug,
             tags: tagIds, // 필요에 따라 추가
+            isPublished,
           }),
         });
 
@@ -309,6 +312,7 @@ const WritePage = () => {
             slug: slugify(title),
             catSlug: finalCatSlug,
             tags: tagIds,
+            isPublished,
           }),
         });
 
@@ -472,6 +476,20 @@ const WritePage = () => {
           placeholder="Tell your story..."
           modules={editorModules}
         />
+      </div>
+      <div className={styles.togglePublish}>
+        <label className={styles.toggleLabel}>
+          <input
+            type="checkbox"
+            checked={isPublished}
+            onChange={(e) => setIsPublished(e.target.checked)}
+            className={styles.toggleInput}
+          />
+          <span className={styles.toggleSlider}></span>
+          <span className={styles.toggleText}>
+            {isPublished ? "공개됨" : "비공개"}
+          </span>
+        </label>
       </div>
       <button className={styles.publish} onClick={handleSubmit}>
         {isEditing ? "수정하기" : "Publish"}

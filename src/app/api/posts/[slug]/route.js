@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 //GET SINGLE POST
 export const GET = async (req, { params }) => {
   const { slug } = await params;
+  const session = await getAuthSession();
   if (!slug || slug === "undefined") {
     return new NextResponse(JSON.stringify({ message: "Invalid post ID" }), {
       status: 400,
@@ -12,11 +13,21 @@ export const GET = async (req, { params }) => {
   try {
     const postExists = await prisma.post.findUnique({
       where: { slug },
+      include: { user: true },
     });
 
     if (!postExists) {
       return new NextResponse(JSON.stringify({ message: "Post not found" }), {
         status: 404,
+      });
+    }
+
+    if (
+      !postExists.isPublished &&
+      session?.user.email !== postExists.user.email
+    ) {
+      return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
+        status: 403,
       });
     }
 
@@ -59,7 +70,7 @@ export const DELETE = async (req, { params }) => {
         JSON.stringify({ message: "Post not found" }, { status: 404 })
       );
     }
-    if (post.userId !== session.user.id) {
+    if (post.userEmail !== session.user.email) {
       return new NextResponse(
         JSON.stringify({ message: "Unauthorized" }, { status: 403 })
       );
@@ -93,7 +104,7 @@ export const PUT = async (req, { params }) => {
   try {
     const { slug } = await params;
     const body = await req.json();
-    const { title, desc, img, tagIds } = body;
+    const { title, desc, img, tagIds, isPublished } = body;
 
     if (!title || !desc) {
       return new NextResponse(
@@ -105,16 +116,16 @@ export const PUT = async (req, { params }) => {
     const post = await prisma.post.findUnique({ where: { slug } });
 
     if (!post) {
-      return new NextResponse(
-        JSON.stringify({ message: "Post not found" }, { status: 404 })
-      );
+      return new NextResponse(JSON.stringify({ message: "Post not found" }), {
+        status: 404,
+      });
     }
 
     // 게시글 작성자인지 확인
-    if (post.userId !== session.user.id) {
-      return new NextResponse(
-        JSON.stringify({ message: "Unauthorized" }, { status: 403 })
-      );
+    if (post.userEmail !== session.user.email) {
+      return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
+        status: 403,
+      });
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -125,7 +136,7 @@ export const PUT = async (req, { params }) => {
       // 게시글 업데이트
       const updatedPost = await tx.post.update({
         where: { slug },
-        data: { title, desc, img, views: { increment: 1 } },
+        data: { title, desc, img, isPublished, views: { increment: 1 } },
         include: { user: true },
       });
 

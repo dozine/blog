@@ -247,6 +247,57 @@
   color: #0056b3;
 }
 
+.togglePublish {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+}
+
+.toggleInput {
+  display: none;
+}
+
+.toggleSlider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 999px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.toggleSlider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.toggleInput:checked + .toggleSlider {
+  background-color: #4caf50;
+}
+
+.toggleInput:checked + .toggleSlider::before {
+  transform: translateX(20px);
+}
+
+.toggleText {
+  font-size: 14px;
+  color: #555;
+}
+
 @media screen and (max-width: 768px) {
   .metaContainer {
     flex-direction: column;
