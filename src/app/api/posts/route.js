@@ -3,6 +3,7 @@ import prisma from "@/app/utils/connect";
 import { NextResponse } from "next/server";
 
 export const GET = async (req) => {
+  const session = await getAuthSession();
   const { searchParams } = new URL(req.url);
   const cat = searchParams.get("cat") || null;
   const tagsParam = searchParams.get("tags");
@@ -14,7 +15,10 @@ export const GET = async (req) => {
 
   const selectedTags = tagsParam ? tagsParam.split(".") : [];
 
+  console.log("Session email:", session?.user?.email);
+
   const where = {
+    isPublished: true,
     ...(cat && { catSlug: cat }),
     ...(selectedTags.length > 0 && {
       OR: selectedTags.map((tagName) => ({
@@ -28,6 +32,14 @@ export const GET = async (req) => {
       })),
     }),
   };
+
+  if (session?.user) {
+    if (session.user.email === process.env.MYEMAIL) {
+      delete where.isPublished; // 관리자는 모든 글을 볼 수 있도록
+    } else {
+      where.OR = [{ isPublished: true }, { userEmail: session.user.email }]; // 본인 글 또는 공개 글
+    }
+  }
 
   const query = {
     take: POST_PER_PAGE,
@@ -43,11 +55,26 @@ export const GET = async (req) => {
       },
     },
   };
+  console.log("Query conditions:", query);
   try {
     const [posts, count] = await prisma.$transaction([
       prisma.post.findMany(query),
       prisma.post.count({ where: query.where }),
     ]);
+
+    console.log("Query result:", {
+      postsCount: posts.length,
+      totalCount: count,
+    });
+    if (posts.length > 0) {
+      console.log("First post:", {
+        id: posts[0].id,
+        title: posts[0].title,
+        isPublished: posts[0].isPublished,
+      });
+    } else {
+      console.log("No posts found");
+    }
 
     return new NextResponse(JSON.stringify({ posts, count }), {
       status: 200,
@@ -72,7 +99,7 @@ export const POST = async (req) => {
 
   try {
     const body = await req.json();
-    const { tags: tagIds, ...postData } = body;
+    const { tags: tagIds, isPublished, ...postData } = body;
     const safeImg = Array.isArray(body.img)
       ? body.img
       : body.img
@@ -93,6 +120,7 @@ export const POST = async (req) => {
           ...postData,
           img: safeImg,
           userEmail: session.user.email,
+          isPublished,
         },
       });
 

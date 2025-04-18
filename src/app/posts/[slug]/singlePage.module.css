@@ -173,6 +173,21 @@
   color: #333;
 }
 
+.status {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.published {
+  color: green;
+  font-weight: bold;
+}
+
+.unpublished {
+  color: red;
+  font-weight: bold;
+}
+
 @media screen and (max-width: 1536px) {
   .title {
     font-size: 54px;
