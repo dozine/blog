@@ -36,7 +36,7 @@ const TagsPage = () => {
       <h1>Tags</h1>
       <TagList selectedTags={tags} onTagClick={handleTagClick} />
       <div className={styles.content}>
-        <CardList page={page} />
+        <CardList />
       </div>
     </div>
   );

@@ -232,7 +232,7 @@ const WritePage = () => {
         // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
         if (res.status === 409) {
           const existingTag = availableTags.find(
-            (tag) => tag.name.toLowerCase() === tagInput.toLowerCase()
+            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase()
           );
           if (existingTag) {
             addTag(existingTag);

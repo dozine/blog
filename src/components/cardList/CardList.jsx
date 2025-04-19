@@ -12,16 +12,20 @@ const CardList = () => {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const cat = searchParams.get("cat") || "";
-
+  const tags = searchParams.get("tags") || "";
+  const formattedTags = tags.replace(/,/g, ".");
   const [posts, setPosts] = useState([]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(`/api/posts?page=${page}&cat=${cat || ""}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/posts?page=${page}&cat=${cat || ""}&tags=${formattedTags}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (!res.ok) {
           throw new Error("Failed");
         }
@@ -35,7 +39,7 @@ const CardList = () => {
       }
     };
     getData();
-  }, [page, cat]);
+  }, [page, cat, tags]);
 
   const totalPages = Math.max(1, Math.ceil(count / POSTS_PER_PAGE));
 
