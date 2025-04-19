@@ -13,7 +13,7 @@ export const GET = async (req) => {
   const page = pageParam ? parseInt(pageParam, 10) : 1;
   const skip = Math.max(0, POST_PER_PAGE * (page - 1));
 
-  const selectedTags = tagsParam ? tagsParam.split(".") : [];
+  const selectedTags = tagsParam ? tagsParam.split(",") : [];
 
   console.log("Session email:", session?.user?.email);
 

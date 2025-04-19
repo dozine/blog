@@ -20,9 +20,9 @@ const Card = ({ item }) => {
           {console.log("Card received tags:", item.tags)}
           {item.tags && Array.isArray(item.tags) && item.tags.length > 0 && (
             <div className={styles.tagContainer}>
-              {item.tags.map((tag) => (
-                <span key={tag.id} className={styles.tag}>
-                  {tag.name}
+              {item.tags.map((tagObj) => (
+                <span key={tagObj.tag?.id} className={styles.tag}>
+                  {tagObj.tag?.name || tagObj.name}
                 </span>
               ))}
             </div>

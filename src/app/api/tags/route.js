@@ -38,10 +38,7 @@ export async function POST(req) {
     });
 
     if (existingTag) {
-      return NextResponse.json(
-        { message: "이미 존재하는 태그입니다." },
-        { status: 409 }
-      );
+      return NextResponse.json(existingTag, { status: 409 });
     }
 
     const newTag = await prisma.tag.create({
