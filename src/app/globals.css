@@ -65,6 +65,57 @@ a {
   min-height: 350px;
 }
 
+/* 이미지 리사이즈 핸들 스타일 */
+.ql-container .image-resizer {
+  position: absolute;
+  border: 1px dashed #777;
+  box-sizing: border-box;
+}
+
+.ql-container .image-resizer .resize-handle {
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  background: #6d8efc;
+  border-radius: 2px;
+}
+
+.ql-container .image-resizer .resize-handle.se {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize;
+}
+
+.ql-container .image-resizer .resize-handle.sw {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize;
+}
+
+.ql-container .image-resizer .resize-handle.ne {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize;
+}
+
+.ql-container .image-resizer .resize-handle.nw {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize;
+}
+
+/* 이미지 사이즈 표시 스타일 */
+.ql-container .image-resizer .display-size {
+  position: absolute;
+  top: -25px;
+  left: 0;
+  background: #333;
+  color: white;
+  padding: 2px 5px;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
 .ql-editor {
   font-size: 1.05rem;
   line-height: 1.8;
@@ -176,6 +227,7 @@ a {
   margin: 15px auto;
   border-radius: 4px;
 }
+
 .ql-toolbar {
   border-bottom: 1px solid #eaeaea;
   background-color: #f9f9f9;

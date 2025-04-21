@@ -2,9 +2,9 @@
 import Image from "next/image";
 import styles from "./writePage.module.css";
 import { useEffect, useRef, useState } from "react";
-import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
 import "react-quill-new/dist/quill.snow.css";
+import ImageResize from "quill-image-resize-module-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -15,6 +15,18 @@ import {
 } from "firebase/storage";
 import { app } from "../utils/firebase";
 import editorModules from "../utils/editor";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+
+const registerImageResize = async () => {
+  if (typeof window !== "undefined") {
+    const Quill = (await import("react-quill-new")).Quill;
+    const ImageResize = (await import("quill-image-resize-module-react"))
+      .default;
+    Quill.register("modules/imageResize", ImageResize);
+  }
+};
 
 const WritePage = () => {
   const { status } = useSession();
@@ -47,6 +59,11 @@ const WritePage = () => {
   const [categories, setCategories] = useState([]);
 
   const [isPublished, setIsPublished] = useState(false);
+
+  useEffect(() => {
+    registerImageResize();
+  }, []);
+
   useEffect(() => {
     if (isEditing && editSlug) {
       const fetchPost = async () => {
