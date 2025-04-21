@@ -53,13 +53,136 @@ a {
   padding-right: 80px;
 }
 
-.ql-container {
-  font-size: 28px !important;
-}
-
 .quill > .ql-container > .ql-editor.ql-blank::before {
   color: #b3b3b1;
 }
+
+/* Quill Editor 스타일 기본 세팅 */
+
+.ql-container {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 16px;
+  min-height: 350px;
+}
+
+.ql-editor {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #222;
+  word-break: break-word;
+  padding: 20px;
+}
+
+/* 헤더 스타일 */
+.ql-editor h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1.2em 0 0.6em;
+}
+.ql-editor h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 1.1em 0 0.6em;
+}
+.ql-editor h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1em 0 0.5em;
+}
+.ql-editor h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0.8em 0 0.4em;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  margin: 15px auto;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 단락 스타일 */
+.ql-editor p {
+  margin: 0.8em 0;
+}
+
+/* 리스트 스타일 */
+.ql-editor ul {
+  padding-left: 1.5rem;
+  margin: 1em 0;
+  list-style-type: disc;
+}
+
+.ql-editor ol {
+  padding-left: 1.5rem;
+  margin: 1em 0;
+  list-style-type: decimal;
+}
+
+.ql-editor li {
+  margin: 0.3em 0;
+}
+
+/* 인용문 */
+.ql-editor blockquote {
+  border-left: 4px solid #ccc;
+  margin: 1em 0;
+  padding-left: 1em;
+  color: #666;
+  font-style: italic;
+  background: #f9f9f9;
+}
+
+/* 링크 */
+.ql-editor a {
+  color: #0070f3;
+  text-decoration: underline;
+}
+
+/* 코드 블록 */
+.ql-editor pre {
+  background: #282c34;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: "Fira Code", "Courier", monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  position: relative;
+}
+
+.ql-editor pre::before {
+  content: "code";
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 12px;
+  background: #444;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* 에디터 내부 이미지 크기 제한 */
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 15px auto;
+  border-radius: 4px;
+}
+.ql-toolbar {
+  border-bottom: 1px solid #eaeaea;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border-radius: 8px 8px 0 0;
+}
+
 @media screen and (max-width: 1536px) {
   .wrapper {
     max-width: 1366px;

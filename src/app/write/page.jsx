@@ -170,11 +170,15 @@ const WritePage = () => {
               console.log("파일 업로드 완료:", downloadURL);
               setMedia(downloadURL);
               setUploadProgress(100);
-              const quill = quillRef.current.getEditor();
-              const range = quill.getSelection(true);
-
-              quill.insertEmbed(range?.index || 0, "image", downloadURL);
-              quill.setSelection((range?.index || 0) + 1);
+              if (quillRef.current) {
+                const quill = quillRef.current.getEditor();
+                const range = quill.getSelection() || {
+                  index: quill.getLength(),
+                };
+                quill.insertEmbed(range.index, "image", downloadURL);
+                quill.setSelection(range.index + 1, 0);
+                quill.focus();
+              }
             })
             .catch((err) => {
               console.error("다운로드 URL 가져오기 실패:", err);
@@ -293,6 +297,7 @@ const WritePage = () => {
 
         if (!res.ok) {
           const errorData = await res.json();
+          console.log("Error response data:", errorData);
           throw new Error(errorData.message || "게시글 수정에 실패했습니다.");
         }
 
@@ -308,7 +313,7 @@ const WritePage = () => {
           body: JSON.stringify({
             title,
             desc: value,
-            img: media,
+            img: Array.isArray(media) ? media : media ? [media] : [],
             slug: slugify(title),
             catSlug: finalCatSlug,
             tags: tagIds,
