@@ -106,6 +106,12 @@ export const PUT = async (req, { params }) => {
     const body = await req.json();
     const { title, desc, img, tagIds, isPublished } = body;
 
+    const formattedImg = Array.isArray(img)
+      ? img
+      : typeof img === "string"
+        ? [img]
+        : [];
+
     if (!title || !desc) {
       return new NextResponse(
         JSON.stringify({ message: "Missing required fields" }, { status: 400 })
@@ -136,7 +142,13 @@ export const PUT = async (req, { params }) => {
       // 게시글 업데이트
       const updatedPost = await tx.post.update({
         where: { slug },
-        data: { title, desc, img, isPublished, views: { increment: 1 } },
+        data: {
+          title,
+          desc,
+          img: formattedImg,
+          isPublished,
+          views: { increment: 1 },
+        },
         include: { user: true },
       });
 

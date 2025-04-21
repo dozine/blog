@@ -6,6 +6,7 @@ import Comments from "@/components/comments/Comments";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import PostDeleteModal from "@/components/modal/PostDeleteModal";
+import "react-quill-new/dist/quill.bubble.css";
 
 const SinglePage = () => {
   const { slug } = useParams();
@@ -153,7 +154,7 @@ const SinglePage = () => {
       <div className={styles.content}>
         <div className={styles.post}>
           <div
-            className={styles.description}
+            className="ql-editor"
             dangerouslySetInnerHTML={{ __html: data?.desc }}
           />
         </div>
