@@ -7,28 +7,28 @@ import { ThemeContext } from "@/context/ThemeContext";
 
 const ThemeToggle = () => {
   const { toggle, theme } = useContext(ThemeContext);
-
+  const claudeOrange = "#f9a03f";
   return (
-    <div
-      className={styles.container}
+    <button
+      className={styles.button}
       onClick={toggle}
-      style={
-        theme === "dark"
-          ? { backgroundColor: "white" }
-          : { backgroundColor: "#0f172a" }
+      aria-label={
+        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
       }
+      style={{
+        borderColor: claudeOrange,
+        color: theme === "dark" ? claudeOrange : "#333",
+      }}
     >
-      <Image src="/moon.png" alt="" width={14} height={14} />
-      <div
-        className={styles.ball}
-        style={
-          theme === "dark"
-            ? { left: 1, background: "#0f172a" }
-            : { right: 1, background: "white" }
-        }
-      ></div>
-      <Image src="/sun.png" alt="" width={14} height={14} />
-    </div>
+      <span className={styles.icon}>
+        {theme === "dark" ? (
+          <Image src="/moon.png" alt="Light mode" width={20} height={20} />
+        ) : (
+          <Image src="/sun.png" alt="Dark mode" width={20} height={20} />
+        )}
+      </span>
+      <span className={styles.text}>{theme === "dark"}</span>
+    </button>
   );
 };
 

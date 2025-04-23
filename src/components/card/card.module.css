@@ -1,53 +1,64 @@
-.container {
+/* .container {
   margin-bottom: 30px;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 50px;
-  background-color: #edede9;
-  border-radius: 20px;
+  gap: 40px;
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 16px;
   overflow: hidden;
   height: 250px;
+  transition: all 0.2s ease;
 }
 
-.imageContainer {
-  flex: 1;
-  width: 33%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image {
-  position: relative;
-  width: 33%;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-  border-radius: 10px;
+.container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .textContainer {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
   justify-content: space-between;
 }
 
+.detail {
+  font-size: 14px;
+  color: #666;
+}
+
 .date {
-  color: gray;
+  color: #999;
 }
 
 .category {
   color: crimson;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.titleContainer h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .desc {
-  font-size: 18px;
+  font-size: 15px;
+  color: #333;
   font-weight: 300;
-  color: var(--softTextColor);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .link {
   border-bottom: 1px solid crimson;
@@ -58,14 +69,14 @@
 .tagContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .tag {
   font-size: 12px;
-  color: #666;
-  background-color: #f0f0f0;
+  color: #444;
+  background-color: #eee;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -76,8 +87,176 @@
   background-color: #ddd;
 }
 
+.imageContainer {
+  width: 250px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
 @media screen and (max-width: 1280px) {
   .imageContainer {
     display: none;
+  }
+} */
+
+.container {
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: auto;
+  position: relative;
+}
+
+.container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.imageContainer {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+
+.container:hover .image {
+  transform: scale(1.04);
+}
+
+.textContainer {
+  padding: 22px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fff;
+}
+
+.categoryWrapper {
+  margin-bottom: 5px;
+}
+
+.category {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid #f9a03f;
+  padding-bottom: 2px;
+}
+
+.titleContainer h1 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  color: #222;
+  position: relative;
+}
+
+.desc {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.tag {
+  font-size: 12px;
+  color: #777;
+  background-color: #f5f5f5;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.date {
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
+}
+
+.readMore {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.readMore:after {
+  content: "→";
+  margin-left: 4px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.container:hover .readMore:after {
+  transform: translateX(3px);
+}
+
+/* 태블릿 이상에서는 이미지와 텍스트 가로 배치 */
+@media screen and (min-width: 768px) {
+  .container {
+    flex-direction: row;
+    height: 230px;
+  }
+
+  .imageContainer {
+    width: 280px;
+    height: 100%;
+    flex-shrink: 0;
+  }
+
+  .textContainer {
+    flex: 1;
+    justify-content: space-between;
+  }
+}
+
+/* 모바일에서는 이미지 위로 */
+@media screen and (max-width: 767px) {
+  .imageContainer {
+    height: 180px;
+  }
+
+  .titleContainer h1 {
+    font-size: 20px;
   }
 }

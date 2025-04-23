@@ -1,5 +1,5 @@
 :root {
-  --bg: white;
+  --bg: #fdfaf5;
   --textColor: black;
   --softBg: #f0f0f0;
   --softTextColor: #626262;
@@ -14,6 +14,7 @@
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: "Pretendard", sans-serif;
 }
 
 a {
@@ -29,7 +30,7 @@ a {
 }
 
 .light {
-  --bg: white;
+  --bg: #fdfaf5;
   --textColor: black;
   --softBg: #f0f0f0;
   --softTextColor: #626262;
@@ -37,7 +38,7 @@ a {
 
 .container {
   min-height: 100vh;
-  max-width: 1200px;
+  max-width: 100vw;
   margin: 0 auto;
   width: 100%;
   background-color: var(--bg);
@@ -45,7 +46,7 @@ a {
 }
 
 .wrapper {
-  max-width: 1536px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 

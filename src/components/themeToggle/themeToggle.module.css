@@ -1,18 +1,35 @@
-.container {
-  width: 40px;
-  height: 20px;
+.button {
+  background: transparent;
+  border: 2px solid;
   border-radius: 50px;
   cursor: pointer;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(249, 160, 63, 0.2);
 }
 
-.ball {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 160, 63, 0.3);
+}
 
-  position: absolute;
+.button:active {
+  transform: translateY(0);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  letter-spacing: 0.5px;
+}
+
+/* 다크모드일 때 추가 스타일 */
+:global(.dark) .button {
+  background-color: rgba(249, 160, 63, 0.1);
 }

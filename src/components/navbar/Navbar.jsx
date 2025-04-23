@@ -12,11 +12,11 @@ const Navbar = () => {
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
-        zindozang
+        ZINDOZANG
       </Link>
       <div className={styles.links}>
-        <Link href="/tags">Tags</Link>
-        <Link href="/">About</Link>
+        <Link href="/tags">TAGS</Link>
+        <Link href="/">ABOUT</Link>
         {session.status === "authenticated" && <AuthLinks />}
         <ThemeToggle />
       </div>

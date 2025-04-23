@@ -5,8 +5,10 @@ import MenuTags from "../menuTags/MenuTags";
 const Menu = () => {
   return (
     <div className={styles.container}>
-      <h2 className={styles.subtitle}>explore</h2>
-      <h1 className={styles.title}>Tags</h1>
+      <h2 className={styles.subtitle}>
+        Explore <b>TAGS</b>
+      </h2>
+
       <MenuTags />
     </div>
   );
