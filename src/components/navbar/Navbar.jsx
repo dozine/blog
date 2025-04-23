@@ -12,7 +12,7 @@ const Navbar = () => {
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
-        ZINDOZANG
+        zindozang
       </Link>
       <div className={styles.links}>
         <Link href="/tags">TAGS</Link>

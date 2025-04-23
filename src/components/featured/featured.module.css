@@ -130,7 +130,7 @@
   font-size: 38px;
   font-weight: 300;
   margin-bottom: 35px;
-  color: #333;
+  color: --textColor;
   letter-spacing: -0.5px;
   line-height: 1.2;
 }

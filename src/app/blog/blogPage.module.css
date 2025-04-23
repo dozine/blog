@@ -7,17 +7,13 @@
 } */
 
 .title {
-  color: #fff;
-  background-color: #ff7f50; /* 코랄 색상 유지 */
+  color: #ff7f50;
   padding: 20px 30px;
   text-align: center;
   text-transform: capitalize;
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-size: 4rem;
+  font-weight: 1000;
   letter-spacing: 1px;
-  margin-bottom: 30px;
-  box-shadow: 0 5px 15px rgba(255, 127, 80, 0.3);
-  border-radius: 2px;
   position: relative;
 }
 

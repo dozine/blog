@@ -41,7 +41,6 @@ const SinglePage = () => {
       }
     };
     getData();
-    console.log("Slug:", slug);
   }, [slug]);
 
   if (loading) return <p>Loading...</p>;
@@ -89,7 +88,15 @@ const SinglePage = () => {
                 </div>
               )}
               <div className={styles.userTextContainer}>
-                <span className={styles.date}>{data.createdAt}</span>
+                <span className={styles.date}>
+                  {new Date(data.createdAt).toLocaleString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
                 {session.status === "authenticated" &&
                   session.data?.user?.email === data?.user?.email && (
                     <div className={styles.status}>

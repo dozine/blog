@@ -55,7 +55,6 @@ const WritePage = () => {
   const [uploadError, setUploadError] = useState("");
   const quillRef = useRef(null);
 
-  const [selectedCat, setSelectedCat] = useState("");
   const [categories, setCategories] = useState([]);
 
   const [isPublished, setIsPublished] = useState(false);

@@ -14,9 +14,6 @@ export const GET = async (req) => {
   const skip = Math.max(0, POST_PER_PAGE * (page - 1));
 
   const selectedTags = tagsParam ? tagsParam.split(",") : [];
-
-  console.log("Session email:", session?.user?.email);
-
   const where = {
     isPublished: true,
     ...(cat && { catSlug: cat }),
@@ -55,26 +52,11 @@ export const GET = async (req) => {
       },
     },
   };
-  console.log("Query conditions:", query);
   try {
     const [posts, count] = await prisma.$transaction([
       prisma.post.findMany(query),
       prisma.post.count({ where: query.where }),
     ]);
-
-    console.log("Query result:", {
-      postsCount: posts.length,
-      totalCount: count,
-    });
-    if (posts.length > 0) {
-      console.log("First post:", {
-        id: posts[0].id,
-        title: posts[0].title,
-        isPublished: posts[0].isPublished,
-      });
-    } else {
-      console.log("No posts found");
-    }
 
     return new NextResponse(JSON.stringify({ posts, count }), {
       status: 200,
@@ -105,7 +87,6 @@ export const POST = async (req) => {
       : body.img
         ? [body.img]
         : [];
-    console.log("Received Post Data:", body);
 
     if (!body.slug || !body.title) {
       return new NextResponse(
@@ -153,8 +134,6 @@ export const POST = async (req) => {
       ...result,
       tags: result.tags.map((pt) => pt.tag),
     };
-
-    console.log("Created Post:", formattedResult);
 
     return new NextResponse(JSON.stringify(formattedResult), { status: 200 });
   } catch (err) {

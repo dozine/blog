@@ -16,7 +16,14 @@ const Card = ({ item }) => {
           <div className={styles.titleContainer}>
             <h1>{item.title}</h1>
           </div>
-          <p>{item.desc.replace(/<[^>]+>/g, "").substring(0, 60)}</p>
+          <p>
+            {(() => {
+              const descText = item.desc.replace(/<[^>]+>/g, "");
+              return descText.length > 60
+                ? descText.substring(0, 60) + "..."
+                : descText;
+            })()}
+          </p>
           {console.log("Card received tags:", item.tags)}
           {item.tags && Array.isArray(item.tags) && item.tags.length > 0 && (
             <div className={styles.tagContainer}>

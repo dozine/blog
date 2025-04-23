@@ -39,12 +39,16 @@
 }
 
 .input {
+  width: 100%;
   padding: 50px;
-  font-size: 64px;
   border: none;
   outline: none;
   background-color: transparent;
   color: var(--textColor);
+  font-family:
+    "Pretendard", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic",
+    sans-serif;
+  font-size: 28px;
 }
 
 .input::placeholder {

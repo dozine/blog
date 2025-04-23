@@ -122,7 +122,6 @@ const CategoryList = () => {
       }
 
       const data = await res.json();
-      console.log("삭제 성공 응답:", data);
 
       await fetchCategories();
       setIsDeleteModalOpen(false);

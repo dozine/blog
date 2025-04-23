@@ -9,14 +9,14 @@
   border: none;
   padding: 10px;
   margin: 5px;
-  background-color: darkgray;
-  color: white;
+
+  color: #333;
   border-radius: 50%;
   cursor: pointer;
 }
 
 .button:hover {
-  background-color: gray;
+  background-color: #ff7f50;
 }
 
 .button:active {
