@@ -89,7 +89,6 @@ const SinglePage = () => {
                 </div>
               )}
               <div className={styles.userTextContainer}>
-                <span className={styles.username}>{data?.user.name}</span>
                 <span className={styles.date}>{data.createdAt}</span>
                 {session.status === "authenticated" &&
                   session.data?.user?.email === data?.user?.email && (
@@ -151,6 +150,7 @@ const SinglePage = () => {
           )}
         </div>
       </div>
+
       <div className={styles.content}>
         <div className={styles.post}>
           <div
