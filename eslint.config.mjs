@@ -29,7 +29,7 @@ const eslintConfig = [
           semi: true,
           tabWidth: 2,
           printWidth: 100,
-          singleQuote: true,
+          singleQuote: false,
           trailingComma: "es5",
           jsxBracketSameLine: false,
         },
