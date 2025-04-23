@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/satoshi/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #fdfaf5;
   --textColor: black;
@@ -63,6 +71,7 @@ a {
 .ql-container {
   font-family: "Noto Sans KR", sans-serif;
   font-size: 16px;
+  color: var(--textColor);
   min-height: 350px;
 }
 
@@ -130,21 +139,25 @@ a {
   font-size: 2rem;
   font-weight: bold;
   margin: 1.2em 0 0.6em;
+  color: var(--textColor);
 }
 .ql-editor h2 {
   font-size: 1.75rem;
   font-weight: bold;
   margin: 1.1em 0 0.6em;
+  color: var(--textColor);
 }
 .ql-editor h3 {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 1em 0 0.5em;
+  color: var(--textColor);
 }
 .ql-editor h4 {
   font-size: 1.25rem;
   font-weight: bold;
   margin: 0.8em 0 0.4em;
+  color: var(--textColor);
 }
 
 .ql-editor img {
@@ -158,6 +171,7 @@ a {
 /* 단락 스타일 */
 .ql-editor p {
   margin: 0.8em 0;
+  color: var(--textColor);
 }
 
 /* 리스트 스타일 */

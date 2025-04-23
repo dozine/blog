@@ -37,7 +37,9 @@ const Featured = () => {
   };
   return (
     <div className={styles.container}>
-      <div className={styles.featuredTitle}>Hello. This is blog zindoang.</div>
+      <div className={styles.featuredTitle}>
+        안녕하세요. 블로그 진도장입니다.
+      </div>
 
       <Slider {...settings}>
         {featuredPosts.map((post) => (

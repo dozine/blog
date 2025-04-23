@@ -41,8 +41,6 @@ export const GET = async (req, { params }) => {
       ...post,
       tags: post.tags.map((pt) => pt.tag),
     };
-
-    console.log("Sending response:", formattedPost);
     return new NextResponse(JSON.stringify(formattedPost), { status: 200 });
   } catch (err) {
     console.log("Error", err);
@@ -85,7 +83,7 @@ export const DELETE = async (req, { params }) => {
       JSON.stringify({ message: "Post deleted" }, { status: 200 })
     );
   } catch (err) {
-    console.log("Errror deleting post:", err);
+    console.error("Errror deleting post:", err);
     return new NextResponse(
       JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
     );

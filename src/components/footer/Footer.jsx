@@ -8,9 +8,6 @@ const Footer = () => {
     <div className={styles.container}>
       <div className={styles.info}>
         <p className={styles.desc}>© 2025. jangdojin all rights reserved.</p>
-        <div className={styles.icons}>
-          <Image src="/facebook.png" alt="" width={18} height={18} />
-        </div>
       </div>
     </div>
   );

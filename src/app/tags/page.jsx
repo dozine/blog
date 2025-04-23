@@ -33,7 +33,7 @@ const TagsPage = () => {
   };
   return (
     <div className={styles.container}>
-      <h1>Tags</h1>
+      <h1></h1>
       <TagList selectedTags={tags} onTagClick={handleTagClick} />
       <div className={styles.content}>
         <CardList />
