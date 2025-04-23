@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import styles from "./CategoryList.module.css";
+import styles from "./categoryList.module.css";
 import AddCategoryModal from "../categoryModal/AddCategoryModal";
 import DeleteCategoryModal from "../categoryModal/DeleteCategoryModal";
 
