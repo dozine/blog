@@ -8,6 +8,10 @@
   display: flex;
   align-items: center;
   gap: 50px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  margin-top: 5rem;
 }
 
 .textContainer {
@@ -17,6 +21,7 @@
 .title {
   font-size: 64px;
   margin-bottom: 50px;
+  text-align: center;
 }
 
 .userContainer {

@@ -27,7 +27,7 @@ const RecentPosts = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>최근 포스트</h2>
+      <h2 className={styles.title}></h2>
       <div className={styles.posts}>
         {posts.length > 0 ? (
           posts.map((item) => <Card key={item.id} item={item} />)

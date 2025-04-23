@@ -33,7 +33,12 @@ const Card = ({ item }) => {
           item.img[0].trim() !== "" && (
             <div className={styles.imageContainer}>
               <div className={styles.image}>
-                <Image src={item.img[0]} alt="" fill />
+                <Image
+                  src={item.img[0]}
+                  alt=""
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
               </div>
             </div>
           )}

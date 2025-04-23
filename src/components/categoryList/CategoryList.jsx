@@ -221,9 +221,12 @@ const CategoryList = () => {
 
       <div className={styles.sliderContainer}>
         <button
-          className={styles.navButton}
+          className={`${styles.navButton} ${styles.navButtonLeft}`}
           onClick={scrollLeftHandler}
-        ></button>
+          aria-label="이전카테고리"
+        >
+          <span className={styles.navArrow}>←</span>
+        </button>
         <div
           className={styles.categoriesSlider}
           ref={sliderRef}
@@ -236,8 +239,11 @@ const CategoryList = () => {
           onTouchMove={handleTouchMove}
         >
           <div className={styles.categories}>
-            <Link href="/blog" className={styles.category}>
-              All{" "}
+            <Link
+              href="/blog"
+              className={`${styles.category} ${styles.allCategory}`}
+            >
+              <span className={styles.categoryText}>All</span>
             </Link>
             {categories?.map((item) => {
               return (
@@ -248,16 +254,19 @@ const CategoryList = () => {
                   }`}
                   key={item._id || item.id}
                 >
-                  {item.title}
+                  <span className={styles.categoryText}>{item.title}</span>
                 </Link>
               );
             })}
           </div>
         </div>
         <button
-          className={styles.navButton}
+          className={`${styles.navButton} ${styles.navButtonRight}`}
           onClick={scrollRightHandler}
-        ></button>
+          aria-label="다음 카테고리"
+        >
+          <span className={styles.navArrow}>→</span>
+        </button>
       </div>
     </div>
   );

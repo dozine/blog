@@ -7,9 +7,9 @@ const Featured = () => {
   const featuredPosts = [
     {
       id: 1,
-      title: "리액트 훅스 완벽 가이드",
-      desc: "리액트 훅스의 모든 것을 알아봅니다.",
-      image: "/p1.jpeg",
+      title: "블로그 소개글 ",
+      desc: "안녕하세요. 프론트엔드 개발자 장도진입니다.",
+      image: "/zindozang.png",
     },
     {
       id: 2,
@@ -37,9 +37,7 @@ const Featured = () => {
   };
   return (
     <div className={styles.container}>
-      <div className={styles.featuredTitle}>
-        안녕하세요. <b>진도장</b> 블로그 입니다.
-      </div>
+      <div className={styles.featuredTitle}>Hello. This is blog zindoang.</div>
 
       <Slider {...settings}>
         {featuredPosts.map((post) => (
