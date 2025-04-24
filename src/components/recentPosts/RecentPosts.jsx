@@ -10,7 +10,7 @@ const RecentPosts = () => {
   useEffect(() => {
     const fetchRecent = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/posts?page=1", {
+        const res = await fetch("/api/posts?page=1", {
           cache: "no-store",
         });
         if (!res.ok) throw new Error("Failed to fetch recent posts");
