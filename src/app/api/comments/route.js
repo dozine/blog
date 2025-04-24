@@ -16,18 +16,14 @@ export const GET = async (req) => {
     return new NextResponse(JSON.stringify(comments), { status: 200 });
   } catch (err) {
     console.log(err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
-    );
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
   }
 };
 // CREATE A COMMENT
 export const POST = async (req) => {
   const session = await getAuthSession();
   if (!session) {
-    return new NextResponse(
-      JSON.stringify({ message: "Not Authenticate" }, { status: 401 })
-    );
+    return new NextResponse(JSON.stringify({ message: "Not Authenticate" }, { status: 401 }));
   }
 
   try {
@@ -40,8 +36,6 @@ export const POST = async (req) => {
     return new NextResponse(JSON.stringify(comment), { status: 200 });
   } catch (err) {
     console.log(err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
-    );
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
   }
 };

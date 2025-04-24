@@ -15,10 +15,7 @@ export async function GET(req) {
     return NextResponse.json(tags, { status: 200 });
   } catch (error) {
     console.error("태그 조회 중 오류 발생", error);
-    return NextResponse.json(
-      { message: "태그 조회 중 오류가 발생했습니다." },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "태그 조회 중 오류가 발생했습니다." }, { status: 500 });
   }
 }
 
@@ -27,10 +24,7 @@ export async function POST(req) {
     const { name } = await req.json();
 
     if (!name) {
-      return NextResponse.json(
-        { message: "태그 이름은 필수입니다." },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "태그 이름은 필수입니다." }, { status: 400 });
     }
 
     const existingTag = await prisma.tag.findUnique({
@@ -48,9 +42,6 @@ export async function POST(req) {
     return NextResponse.json(newTag, { status: 201 });
   } catch (error) {
     console.error("태그 생성 중 오류 발생:", error);
-    return NextResponse.json(
-      { message: "태그 생성 중 오류가 발생했습니다." },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "태그 생성 중 오류가 발생했습니다." }, { status: 500 });
   }
 }

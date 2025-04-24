@@ -131,10 +131,7 @@ export const DELETE = async (req) => {
       });
     });
 
-    return NextResponse.json(
-      { message: "카테고리 삭제 완료", deleted },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "카테고리 삭제 완료", deleted }, { status: 200 });
   } catch (err) {
     console.error("카테고리 삭제 오류:", err);
     return new NextResponse("카테고리 삭제 중 오류 발생: " + err.message, {
