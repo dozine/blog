@@ -88,9 +88,7 @@ const Comments = ({ postSlug }) => {
                     />
                   )}
                   <div className={styles.userInfo}>
-                    <span className={styles.username}>
-                      {item?.user?.name || "Anounymous"}
-                    </span>
+                    <span className={styles.username}>{item?.user?.name || "Anounymous"}</span>
                     <span className={styles.date}>{item.createdAt}</span>
                   </div>
                 </div>

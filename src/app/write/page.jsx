@@ -7,12 +7,7 @@ import "react-quill-new/dist/quill.snow.css";
 import ImageResize from "quill-image-resize-module-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, getStorage } from "firebase/storage";
 import { app } from "../utils/firebase";
 import editorModules from "../utils/editor";
 import dynamic from "next/dynamic";
@@ -22,8 +17,7 @@ const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 const registerImageResize = async () => {
   if (typeof window !== "undefined") {
     const Quill = (await import("react-quill-new")).Quill;
-    const ImageResize = (await import("quill-image-resize-module-react"))
-      .default;
+    const ImageResize = (await import("quill-image-resize-module-react")).default;
     Quill.register("modules/imageResize", ImageResize);
   }
 };
@@ -188,12 +182,7 @@ const WritePage = () => {
           return;
         }
 
-        const validTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
+        const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
         if (!validTypes.includes(file.type)) {
           setUploadError("지원되는 이미지 형식은 JPEG, PNG, GIF, WEBP입니다.");
           return;
@@ -210,15 +199,12 @@ const WritePage = () => {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setUploadProgress(progress);
           },
           (error) => {
             console.error("업로드 오류:", error);
-            setUploadError(
-              "이미지 업로드 중 오류가 발생했습니다: " + error.message
-            );
+            setUploadError("이미지 업로드 중 오류가 발생했습니다: " + error.message);
           },
           async () => {
             try {
@@ -422,9 +408,7 @@ const WritePage = () => {
             <input
               ref={tagInputRef}
               type="text"
-              placeholder={
-                tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"
-              }
+              placeholder={tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"}
               className={styles.tagInput}
               value={tagInput}
               onChange={(e) => {
@@ -454,11 +438,7 @@ const WritePage = () => {
           {showTagSuggestions && filteredTags.length > 0 && (
             <div className={styles.tagSuggestions}>
               {filteredTags.slice(0, 5).map((tag) => (
-                <div
-                  key={tag.id}
-                  className={styles.tagSuggestion}
-                  onClick={() => addTag(tag)}
-                >
+                <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
                   {tag.name}
                 </div>
               ))}
@@ -470,10 +450,7 @@ const WritePage = () => {
             {tags.map((tag) => (
               <span key={tag.id} className={styles.tagBadge}>
                 {tag.name}
-                <button
-                  className={styles.removeTagButton}
-                  onClick={() => removeTag(tag.id)}
-                >
+                <button className={styles.removeTagButton} onClick={() => removeTag(tag.id)}>
                   ×
                 </button>
               </span>
@@ -518,10 +495,7 @@ const WritePage = () => {
         {file && uploadProgress < 100 && uploadProgress > 0 && (
           <div className={styles.uploadStatus}>
             <div className={styles.progressBar}>
-              <div
-                className={styles.progressFill}
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
+              <div className={styles.progressFill} style={{ width: `${uploadProgress}%` }}></div>
             </div>
             <span>{uploadProgress.toFixed(0)}% 업로드됨</span>
           </div>
@@ -549,9 +523,7 @@ const WritePage = () => {
             className={styles.toggleInput}
           />
           <span className={styles.toggleSlider}></span>
-          <span className={styles.toggleText}>
-            {isPublished ? "공개됨" : "비공개"}
-          </span>
+          <span className={styles.toggleText}>{isPublished ? "공개됨" : "비공개"}</span>
         </label>
       </div>
       <button className={styles.publish} onClick={handleSubmit}>

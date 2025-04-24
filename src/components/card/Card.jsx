@@ -8,9 +8,7 @@ const Card = ({ item }) => {
       <div className={styles.container}>
         <div className={styles.textContainer}>
           <div className={styles.detail}>
-            <span className={styles.date}>
-              {item.createdAt.substring(0, 10)} -{" "}
-            </span>
+            <span className={styles.date}>{item.createdAt.substring(0, 10)} - </span>
             <span className={styles.category}>{item.catSlug}</span>
           </div>
           <div className={styles.titleContainer}>
@@ -19,9 +17,7 @@ const Card = ({ item }) => {
           <p>
             {(() => {
               const descText = item.desc.replace(/<[^>]+>/g, "");
-              return descText.length > 60
-                ? descText.substring(0, 60) + "..."
-                : descText;
+              return descText.length > 60 ? descText.substring(0, 60) + "..." : descText;
             })()}
           </p>
           {console.log("Card received tags:", item.tags)}
@@ -35,20 +31,13 @@ const Card = ({ item }) => {
             </div>
           )}
         </div>
-        {Array.isArray(item.img) &&
-          item.img.length > 0 &&
-          item.img[0].trim() !== "" && (
-            <div className={styles.imageContainer}>
-              <div className={styles.image}>
-                <Image
-                  src={item.img[0]}
-                  alt=""
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
+        {Array.isArray(item.img) && item.img.length > 0 && item.img[0].trim() !== "" && (
+          <div className={styles.imageContainer}>
+            <div className={styles.image}>
+              <Image src={item.img[0]} alt="" fill style={{ objectFit: "cover" }} />
             </div>
-          )}
+          </div>
+        )}
       </div>
     </Link>
   );
