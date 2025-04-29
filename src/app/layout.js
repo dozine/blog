@@ -7,6 +7,8 @@ import ThemeProvider from "@/providers/ThemeProvider";
 import AuthProvider from "@/providers/AuthProvider";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Analytics } from "@vercel/analytics/react";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -43,6 +45,7 @@ export default function RootLayout({ children }) {
                 <div className="wrapper">
                   <Navbar />
                   {children}
+                  <Analytics />
                   <Footer />
                 </div>
               </div>
