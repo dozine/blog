@@ -8,7 +8,7 @@ import AuthProvider from "@/providers/AuthProvider";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Analytics } from "@vercel/analytics/react";
-import Script from "next/script";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <Script
+        {/* <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
           strategy="afterInteractive"
           async
@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
             gtag('js', new Date());
             gtag('config', 'G-4QDHKQH1M8');
           `}
-        </Script>
+        </Script> */}
         <link
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
           rel="stylesheet"
