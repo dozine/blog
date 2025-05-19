@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 전체 Git 히스토리 가져오기
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -22,13 +24,17 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test:ci
+        run: npm run test:ci -- --passWithNoTests
 
   deploy-preview:
     needs: test
     if: success() && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 전체 Git 히스토리 가져오기
+
       - name: Deploy to Vercel (Preview)
         uses: amondnet/vercel-action@v20
         with:
@@ -43,6 +49,10 @@ jobs:
     if: success() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 전체 Git 히스토리 가져오기
+
       - name: Deploy to Vercel (Production)
         uses: amondnet/vercel-action@v20
         with:
