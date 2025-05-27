@@ -1,23 +1,24 @@
 "use client";
+import React from "react";
 import Image from "next/image";
 import styles from "./writePage.module.css";
 import { useEffect, useRef, useState } from "react";
 import "react-quill-new/dist/quill.bubble.css";
 import "react-quill-new/dist/quill.snow.css";
-import ImageResize from "quill-image-resize-module-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ref, uploadBytesResumable, getDownloadURL, getStorage } from "firebase/storage";
-import { app } from "../utils/firebase";
 import editorModules from "../utils/editor";
 import dynamic from "next/dynamic";
+import PostSettingModal from "@/components/postSettingModal/PostSettingModal";
+import ImageUploader from "@/components/imageUploader/ImageUploader";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const registerImageResize = async () => {
   if (typeof window !== "undefined") {
     const Quill = (await import("react-quill-new")).Quill;
-    const ImageResize = (await import("quill-image-resize-module-react")).default;
+    const ImageResize = (await import("quill-image-resize-module-react"))
+      .default;
     Quill.register("modules/imageResize", ImageResize);
   }
 };
@@ -30,28 +31,23 @@ const WritePage = () => {
   const isEditing = searchParams.get("edit") === "true";
   const editSlug = searchParams.get("slug");
 
-  const [open, setOpen] = useState(false);
-  const [file, setFile] = useState(null);
   const [media, setMedia] = useState("");
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
-  const [catSlug, setCatSlug] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 모달과 관련된 상태
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+
+  // 설정값들
+  const [catSlug, setCatSlug] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
-  const [filteredTags, setFilteredTags] = useState([]);
-  const tagInputRef = useRef(null);
-
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadError, setUploadError] = useState("");
-  const quillRef = useRef(null);
-
+  const [isPublished, setIsPublished] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  const [isPublished, setIsPublished] = useState(false);
+  const quillRef = useRef(null);
 
   useEffect(() => {
     registerImageResize();
@@ -88,6 +84,7 @@ const WritePage = () => {
     }
   }, [isEditing, editSlug]);
 
+  // 카테고리 불러오기
   useEffect(() => {
     const getCategories = async () => {
       try {
@@ -101,6 +98,7 @@ const WritePage = () => {
     getCategories();
   }, []);
 
+  // 사용 가능한 태그 불러오기
   useEffect(() => {
     const fetchAvailableTags = async () => {
       try {
@@ -116,191 +114,9 @@ const WritePage = () => {
     fetchAvailableTags();
   }, []);
 
-  useEffect(() => {
-    if (tagInput.trim()) {
-      const filtered = availableTags.filter(
-        (tag) =>
-          tag.name.toLowerCase().includes(tagInput.toLowerCase()) &&
-          !tags.some((selectedTag) => selectedTag.id === tag.id)
-      );
-      setFilteredTags(filtered);
-    } else {
-      setFilteredTags([]);
-    }
-  }, [tagInput, availableTags, tags]);
-
-  // 업로드 전 이미지 압축/리사이징
-  const compressImage = async (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new window.Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          // 최대 크기 설정 (예: 1200px)
-          const MAX_SIZE = 1200;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height && width > MAX_SIZE) {
-            height = Math.round((height * MAX_SIZE) / width);
-            width = MAX_SIZE;
-          } else if (height > MAX_SIZE) {
-            width = Math.round((width * MAX_SIZE) / height);
-            height = MAX_SIZE;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // 압축된 이미지를 Blob으로 변환 (품질 0.8)
-          canvas.toBlob(
-            (blob) => {
-              resolve(new File([blob], file.name, { type: file.type }));
-            },
-            file.type,
-            0.8
-          );
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  useEffect(() => {
-    const upload = async () => {
-      if (!file) return;
-
-      setUploadError("");
-      setUploadProgress(0);
-      try {
-        if (file.size > 5 * 1024 * 1024) {
-          setUploadError("파일 크기는 5MB 이하여야 합니다.");
-          return;
-        }
-
-        const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-        if (!validTypes.includes(file.type)) {
-          setUploadError("지원되는 이미지 형식은 JPEG, PNG, GIF, WEBP입니다.");
-          return;
-        }
-
-        const compressedFile = await compressImage(file);
-
-        const name = new Date().getTime() + file.name;
-        const storage = getStorage(app);
-        const storageRef = ref(storage, name);
-
-        const uploadTask = uploadBytesResumable(storageRef, compressedFile);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(progress);
-          },
-          (error) => {
-            console.error("업로드 오류:", error);
-            setUploadError("이미지 업로드 중 오류가 발생했습니다: " + error.message);
-          },
-          async () => {
-            try {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              setMedia(downloadURL);
-              setUploadProgress(100);
-              if (quillRef.current) {
-                const quill = quillRef.current.getEditor();
-                const range = quill.getSelection() || {
-                  index: quill.getLength(),
-                };
-                quill.insertEmbed(range.index, "image", downloadURL);
-                quill.setSelection(range.index + 1, 0);
-                quill.focus();
-              }
-            } catch (err) {
-              console.error("다운로드 URL 가져오기 실패:", err);
-              setUploadError("이미지 URL을 가져오는데 실패했습니다.");
-            }
-          }
-        );
-      } catch (error) {
-        console.error("이미지 압축 오류:", error);
-        setUploadError("이미지 압축 중 오류가 발생했습니다.");
-      }
-    };
-    if (file) {
-      upload();
-    }
-  }, [file]);
-  if (status === "loading" || loading) {
-    return <div className={styles.loading}>Loging...</div>;
-  }
-  if (status === "unauthenticated") {
-    router.push("/");
-    return null;
-  }
-
-  const addTag = (tag) => {
-    if (tags.length >= 5) {
-      alert("태그는 최대 5개까지만 추가할 수 있습니다.");
-      return;
-    }
-
-    if (tag && !tags.some((t) => t.id === tag.id)) {
-      setTags([...tags, tag]);
-    }
-
-    setTagInput("");
-    setShowTagSuggestions(false);
-    tagInputRef.current?.focus();
-  };
-
-  // 새 태그 생성 함수
-  const createNewTag = async () => {
-    if (!tagInput.trim()) return;
-    if (tags.length >= 5) {
-      alert("태그는 최대 5개까지만 추가할 수 있습니다.");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/tags", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: tagInput.trim() }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
-        if (res.status === 409) {
-          const existingTag = availableTags.find(
-            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase()
-          );
-          if (existingTag) {
-            addTag(existingTag);
-            return;
-          }
-        }
-        throw new Error(errorData.message || "태그 생성에 실패했습니다.");
-      }
-
-      const newTag = await res.json();
-      addTag(newTag);
-      setAvailableTags([...availableTags, newTag]);
-    } catch (err) {
-      console.error("태그 생성 실패:", err);
-      alert(err.message);
-    }
-  };
-
-  const removeTag = (tagId) => {
-    setTags(tags.filter((tag) => tag.id !== tagId));
+  // 이미지 업로드 완료 시 호출되는 함수
+  const handleImageUploaded = (url) => {
+    setMedia(url);
   };
 
   const slugify = (str) =>
@@ -312,12 +128,21 @@ const WritePage = () => {
       .replace(/-+/g, "-") // 연속된 하이픈 제거
       .toLowerCase();
 
-  const handleSubmit = async () => {
-    if (!title || !value) {
-      alert("제목과 내용을 입력해주세요.");
+  // 게시하기 버튼 클릭 시 모달 열기
+  const handlePublishClick = () => {
+    if (!title) {
+      alert("제목을 입력해주세요.");
       return;
     }
+    if (!value) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+    setShowSettingsModal(true);
+  };
 
+  // 모달에서 최종 게시 버튼 클릭 시
+  const handleFinalPublish = async () => {
     const finalCatSlug = catSlug || "uncategorized";
     const tagIds = tags.map((tag) => tag.id);
 
@@ -334,7 +159,7 @@ const WritePage = () => {
             desc: value,
             img: media,
             catSlug: finalCatSlug,
-            tags: tagIds, // 필요에 따라 추가
+            tags: tagIds,
             isPublished,
           }),
         });
@@ -380,8 +205,18 @@ const WritePage = () => {
     }
   };
 
+  if (status === "loading" || loading) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/");
+    return null;
+  }
+
   return (
     <div className={styles.container}>
+      {/* 제목 입력 */}
       <input
         type="text"
         placeholder="Title"
@@ -389,121 +224,16 @@ const WritePage = () => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <div className={styles.metaContainer}>
-        <select
-          className={styles.select}
-          value={catSlug}
-          onChange={(e) => setCatSlug(e.target.value)}
-        >
-          <option value="">카테고리</option>
-          {categories.map((cat) => (
-            <option key={cat.slug} value={cat.slug}>
-              {cat.title}
-            </option>
-          ))}
-        </select>
 
-        <div className={styles.tagsContainer}>
-          <div className={styles.tagInputWrapper}>
-            <input
-              ref={tagInputRef}
-              type="text"
-              placeholder={tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"}
-              className={styles.tagInput}
-              value={tagInput}
-              onChange={(e) => {
-                setTagInput(e.target.value);
-                setShowTagSuggestions(true);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (filteredTags.length > 0) {
-                    addTag(filteredTags[0]);
-                  } else if (tagInput.trim()) {
-                    createNewTag();
-                  }
-                }
-              }}
-              disabled={tags.length >= 5}
-            />
-            {tags.length < 5 && tagInput && (
-              <button className={styles.addTagButton} onClick={createNewTag}>
-                +
-              </button>
-            )}
-          </div>
-
-          {/* 태그 제안 목록 */}
-          {showTagSuggestions && filteredTags.length > 0 && (
-            <div className={styles.tagSuggestions}>
-              {filteredTags.slice(0, 5).map((tag) => (
-                <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
-                  {tag.name}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 선택된 태그 표시 */}
-          <div className={styles.selectedTags}>
-            {tags.map((tag) => (
-              <span key={tag.id} className={styles.tagBadge}>
-                {tag.name}
-                <button className={styles.removeTagButton} onClick={() => removeTag(tag.id)}>
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* 에디터 영역 */}
       <div className={styles.editor}>
-        <button
-          className={styles.button}
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
-          <Image src="/plus.png" alt="" width={16} height={16} />
-        </button>
-        {open && (
-          <div className={styles.add}>
-            <input
-              type="file"
-              id="image"
-              onChange={(e) => setFile(e.target.files[0])}
-              style={{ display: "none" }}
-              accept="image/*"
-            />
+        {/* 이미지 업로더 컴포넌트 */}
+        <ImageUploader
+          onImageUploaded={handleImageUploaded}
+          quillRef={quillRef}
+        />
 
-            <button className={styles.addButton}>
-              <label htmlFor="image">
-                <Image src="/image.png" alt="" width={16} height={16} />
-              </label>
-            </button>
-            <button className={styles.addButton}>
-              <Image src="/external.png" alt="" width={16} height={16} />
-            </button>
-            <button className={styles.addButton}>
-              <Image src="/video.png" alt="" width={16} height={16} />
-            </button>
-          </div>
-        )}
-        {/* 업로드 상태 표시 */}
-        {file && uploadProgress < 100 && uploadProgress > 0 && (
-          <div className={styles.uploadStatus}>
-            <div className={styles.progressBar}>
-              <div className={styles.progressFill} style={{ width: `${uploadProgress}%` }}></div>
-            </div>
-            <span>{uploadProgress.toFixed(0)}% 업로드됨</span>
-          </div>
-        )}
-
-        {/* 업로드 오류 표시 */}
-        {uploadError && <div className={styles.uploadError}>{uploadError}</div>}
-
+        {/* Quill 에디터 */}
         <ReactQuill
           ref={quillRef}
           className={styles.textArea}
@@ -514,21 +244,32 @@ const WritePage = () => {
           modules={editorModules}
         />
       </div>
-      <div className={styles.togglePublish}>
-        <label className={styles.toggleLabel}>
-          <input
-            type="checkbox"
-            checked={isPublished}
-            onChange={(e) => setIsPublished(e.target.checked)}
-            className={styles.toggleInput}
-          />
-          <span className={styles.toggleSlider}></span>
-          <span className={styles.toggleText}>{isPublished ? "공개됨" : "비공개"}</span>
-        </label>
-      </div>
-      <button className={styles.publish} onClick={handleSubmit}>
+
+      {/* 게시 버튼 */}
+      <button className={styles.publish} onClick={handlePublishClick}>
         {isEditing ? "수정하기" : "Publish"}
       </button>
+
+      {/* 설정 모달 */}
+      <PostSettingModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        catSlug={catSlug}
+        setCatSlug={setCatSlug}
+        isPublished={isPublished}
+        setIsPublished={setIsPublished}
+        tagInput={tagInput}
+        setTagInput={setTagInput}
+        tags={tags}
+        setTags={setTags}
+        categories={categories}
+        availableTags={availableTags}
+        setAvailableTags={setAvailableTags}
+        onPublish={() => {
+          handleFinalPublish();
+          setShowSettingsModal(false);
+        }}
+      />
     </div>
   );
 };
