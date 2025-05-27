@@ -13,6 +13,7 @@ const nextConfig = {
     ],
     domains: ["picsum.photos"],
   },
+  compiler: {},
 };
 
 export default nextConfig;
