@@ -37,13 +37,20 @@ const Featured = () => {
   };
   return (
     <div className={styles.container}>
-      <div className={styles.featuredTitle}>안녕하세요. 블로그 진도장입니다.</div>
+      <div className={styles.featuredTitle}>
+        안녕하세요. 블로그 진도장입니다.
+      </div>
 
       <Slider {...settings}>
         {featuredPosts.map((post) => (
           <div key={post.id} className={styles.slide}>
             <div className={styles.imgContainer}>
-              <Image src={post.image} alt={post.title} fill className={styles.image} />
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className={styles.image}
+              />
             </div>
             <div className={styles.textContainer}>
               <h1 className={styles.postTitle}>{post.title}</h1>

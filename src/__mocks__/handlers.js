@@ -14,13 +14,13 @@ export const handlers = [
 
     const lowerCaseName = name.toLowerCase();
     const foundTag = _existingTags.find(
-      (tag) => tag.name.toLowerCase() === lowerCaseName
+      (tag) => tag.name.toLowerCase() === lowerCaseName,
     );
 
     if (foundTag) {
       return res(
         ctx.status(409),
-        ctx.json({ message: "Tag already exists", tag: foundTag })
+        ctx.json({ message: "Tag already exists", tag: foundTag }),
       );
     }
 

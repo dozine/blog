@@ -41,7 +41,7 @@ export const POST = async (req) => {
             message: "미분류 카테고리가 이미 존재합니다.",
             category: existingCategory,
           },
-          { status: 200 }
+          { status: 200 },
         );
       }
     }
@@ -66,7 +66,7 @@ export const POST = async (req) => {
 
     return NextResponse.json(
       { message: "카테고리 생성 완료", category: newCategory },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
     console.error("카테고리 생성 오류:", err);
@@ -131,7 +131,10 @@ export const DELETE = async (req) => {
       });
     });
 
-    return NextResponse.json({ message: "카테고리 삭제 완료", deleted }, { status: 200 });
+    return NextResponse.json(
+      { message: "카테고리 삭제 완료", deleted },
+      { status: 200 },
+    );
   } catch (err) {
     console.error("카테고리 삭제 오류:", err);
     return new NextResponse("카테고리 삭제 중 오류 발생: " + err.message, {

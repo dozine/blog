@@ -16,13 +16,19 @@ export async function GET(req, { params }) {
     });
 
     if (!tag) {
-      return NextResponse.json({ message: "태그를 찾을 수 없습니다." }, { status: 404 });
+      return NextResponse.json(
+        { message: "태그를 찾을 수 없습니다." },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(tag, { status: 200 });
   } catch (error) {
     console.error("태그 조회 중 오류 발생:", error);
-    return NextResponse.json({ message: "태그 조회 중 오류가 발생했습니다." }, { status: 500 });
+    return NextResponse.json(
+      { message: "태그 조회 중 오류가 발생했습니다." },
+      { status: 500 },
+    );
   }
 }
 
@@ -33,7 +39,10 @@ export async function PUT(req, { params }) {
     const { name } = await req.json();
 
     if (!name) {
-      return NextResponse.json({ message: "태그 이름은 필수입니다." }, { status: 400 });
+      return NextResponse.json(
+        { message: "태그 이름은 필수입니다." },
+        { status: 400 },
+      );
     }
 
     // 이름 중복 체크 (같은 이름으로 변경하는 경우는 제외)
@@ -45,7 +54,10 @@ export async function PUT(req, { params }) {
     });
 
     if (existingTag) {
-      return NextResponse.json({ message: "이미 존재하는 태그 이름입니다." }, { status: 409 });
+      return NextResponse.json(
+        { message: "이미 존재하는 태그 이름입니다." },
+        { status: 409 },
+      );
     }
 
     const updatedTag = await prisma.tag.update({
@@ -56,7 +68,10 @@ export async function PUT(req, { params }) {
     return NextResponse.json(updatedTag, { status: 200 });
   } catch (error) {
     console.error("태그 수정 중 오류 발생:", error);
-    return NextResponse.json({ message: "태그 수정 중 오류가 발생했습니다." }, { status: 500 });
+    return NextResponse.json(
+      { message: "태그 수정 중 오류가 발생했습니다." },
+      { status: 500 },
+    );
   }
 }
 
@@ -75,9 +90,15 @@ export async function DELETE(res, { params }) {
       where: { id },
     });
 
-    return NextResponse.json({ message: "태그가 삭제되었습니다." }, { status: 200 });
+    return NextResponse.json(
+      { message: "태그가 삭제되었습니다." },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("태그 삭제 중 오류 발생:", error);
-    return NextResponse.json({ message: "태그 삭제 중 오류가 발생했습니다." }, { status: 500 });
+    return NextResponse.json(
+      { message: "태그 삭제 중 오류가 발생했습니다." },
+      { status: 500 },
+    );
   }
 }
