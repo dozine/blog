@@ -8,7 +8,7 @@ import {
   getStorage,
 } from "firebase/storage";
 
-import styles from "./ImageUploader.module.css";
+import styles from "./imageUploader.module.css";
 import { app } from "@/app/utils/firebase";
 
 const ImageUploader = ({ onImageUploaded, quillRef }) => {

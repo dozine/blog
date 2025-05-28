@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import styles from "./PostSettingModal.module.css";
+import styles from "./postSettingModal.module.css";
 
 const PostSettingModal = ({
   isOpen,
