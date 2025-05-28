@@ -22,7 +22,9 @@ const TagList = ({ selectedTags, onTagClick }) => {
         }
         const data = await res.json();
 
-        const uniqueTags = Array.from(new Map(data.map((tag) => [tag.name, tag])).values());
+        const uniqueTags = Array.from(
+          new Map(data.map((tag) => [tag.name, tag])).values(),
+        );
         setTags(uniqueTags);
         setError(null);
       } catch (error) {
@@ -64,12 +66,17 @@ const TagList = ({ selectedTags, onTagClick }) => {
       {session?.status === "authenticated" && (
         <div className={styles.menuContainer}>
           <div className={styles.menuWrapper}>
-            <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
+            <button
+              className={styles.menuButton}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
               태그 관리
             </button>
             {menuOpen && (
               <div className={styles.menu}>
-                <button onClick={() => setIsDeleteModalOpen(true)}>삭제하기</button>
+                <button onClick={() => setIsDeleteModalOpen(true)}>
+                  삭제하기
+                </button>
 
                 <DeleteTagModal
                   isOpen={isDeleteModalOpen}

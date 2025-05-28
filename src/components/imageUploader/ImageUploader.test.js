@@ -79,7 +79,7 @@ describe("ImageUploader", () => {
             },
           })),
           toBlob: jest.fn((callback) =>
-            callback(new Blob(["mock-image"], { type: "image/png" }))
+            callback(new Blob(["mock-image"], { type: "image/png" })),
           ),
           width: 0,
           height: 0,
@@ -102,7 +102,7 @@ describe("ImageUploader", () => {
   });
 
   const simulateFileReaderLoad = (
-    dataUrl = "data:image/png;base64,mockdata"
+    dataUrl = "data:image/png;base64,mockdata",
   ) => {
     act(() => {
       mockFileReader.result = dataUrl;
@@ -137,7 +137,7 @@ describe("ImageUploader", () => {
   };
 
   const setupSuccessfulUpload = (
-    downloadUrl = "http://mock-success-url.com/uploaded-image.png"
+    downloadUrl = "http://mock-success-url.com/uploaded-image.png",
   ) => {
     getDownloadURL.mockImplementation(async () => {
       const resolvedUrl = await Promise.resolve(downloadUrl);
@@ -168,7 +168,7 @@ describe("ImageUploader", () => {
             });
           });
         }
-      }
+      },
     );
   };
 
@@ -186,7 +186,7 @@ describe("ImageUploader", () => {
             });
           });
         }
-      }
+      },
     );
   };
 
@@ -195,7 +195,7 @@ describe("ImageUploader", () => {
       <ImageUploader
         onImageUploaded={mockOnImageUploaded}
         quillRef={mockQuillRef}
-      />
+      />,
     );
 
     const plusButton = screen.getByRole("button", { name: "" });
@@ -211,7 +211,7 @@ describe("ImageUploader", () => {
       <ImageUploader
         onImageUploaded={mockOnImageUploaded}
         quillRef={mockQuillRef}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByRole("button", { name: "" }));
@@ -219,7 +219,7 @@ describe("ImageUploader", () => {
     const largeFile = new File(
       [new ArrayBuffer(5 * 1024 * 1024 + 1)],
       "large.png",
-      { type: "image/png" }
+      { type: "image/png" },
     );
 
     await act(async () => {
@@ -241,7 +241,7 @@ describe("ImageUploader", () => {
 
         expect(hasFileSizeError).toBe(true);
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     expect(uploadBytesResumable).not.toHaveBeenCalled();
@@ -254,7 +254,7 @@ describe("ImageUploader", () => {
       <ImageUploader
         onImageUploaded={mockOnImageUploaded}
         quillRef={mockQuillRef}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByRole("button", { name: "" }));
@@ -284,7 +284,7 @@ describe("ImageUploader", () => {
 
         expect(hasUploadError).toBe(true);
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     expect(mockOnImageUploaded).not.toHaveBeenCalled();
@@ -295,7 +295,7 @@ describe("ImageUploader", () => {
       <ImageUploader
         onImageUploaded={mockOnImageUploaded}
         quillRef={mockQuillRef}
-      />
+      />,
     );
 
     console.log("=== 초기 렌더링 상태 ===");

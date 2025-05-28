@@ -79,7 +79,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     });
 
     expect(
-      screen.getByRole("heading", { name: /게시 설정/i })
+      screen.getByRole("heading", { name: /게시 설정/i }),
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/태그 입력/i)).toBeInTheDocument();
     jest.useRealTimers();
@@ -88,7 +88,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
   test("isOpen이 False이면 모달이 렌더링되지 않습니다.", () => {
     render(<PostSettingModal {...currentMockProps} isOpen={false} />);
     expect(
-      screen.queryByRole("heading", { name: /게시 설정/i })
+      screen.queryByRole("heading", { name: /게시 설정/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -114,7 +114,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     await user.keyboard("{enter}");
     await waitFor(() => {
       expect(currentMockProps.setTags).toHaveBeenCalledWith(
-        expect.arrayContaining([{ id: 1, name: "react" }])
+        expect.arrayContaining([{ id: 1, name: "react" }]),
       );
     });
     expect(currentMockProps.setTagInput).toHaveBeenCalledWith("");
@@ -212,7 +212,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     await user.type(tagInput, "tag6");
     await user.keyboard("{enter}");
     expect(currentMockProps.setTags).not.toHaveBeenCalledWith(
-      expect.arrayContaining([{ id: expect.any(Number), name: "tag6" }])
+      expect.arrayContaining([{ id: expect.any(Number), name: "tag6" }]),
     );
     alertSpy.mockRestore();
   });
@@ -246,7 +246,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     rerender(<PostSettingModal {...currentMockProps} />);
     await waitFor(() => {
       expect(
-        screen.getByRole("checkbox", { name: /공개 설정/i })
+        screen.getByRole("checkbox", { name: /공개 설정/i }),
       ).toBeChecked();
     });
     currentMockProps.setIsPublished.mockClear();
@@ -257,7 +257,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     rerender(<PostSettingModal {...currentMockProps} />);
     await waitFor(() => {
       expect(
-        screen.getByRole("checkbox", { name: /공개 설정/i })
+        screen.getByRole("checkbox", { name: /공개 설정/i }),
       ).not.toBeChecked();
     });
   });
@@ -267,7 +267,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     render(<PostSettingModal {...currentMockProps} />);
 
     const publishButton = await waitFor(() =>
-      screen.getByRole("button", { name: /게시하기/i })
+      screen.getByRole("button", { name: /게시하기/i }),
     );
     await user.click(publishButton);
 

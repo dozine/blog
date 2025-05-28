@@ -33,7 +33,7 @@ const PostSettingModal = ({
       const filtered = availableTags.filter(
         (tag) =>
           tag.name.toLowerCase().includes(tagInput.toLowerCase()) &&
-          !tags.some((selectedTag) => selectedTag.id === tag.id)
+          !tags.some((selectedTag) => selectedTag.id === tag.id),
       );
       setFilteredTags(filtered);
     } else {
@@ -81,7 +81,7 @@ const PostSettingModal = ({
         // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
         if (res.status === 409) {
           const existingTag = availableTags.find(
-            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase()
+            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase(),
           );
           if (existingTag) {
             addTag(existingTag);

@@ -49,7 +49,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
               resolve(new File([blob], file.name, { type: file.type }));
             },
             file.type,
-            0.8
+            0.8,
           );
         };
         img.src = e.target.result;
@@ -99,7 +99,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
           (error) => {
             console.error("업로드 오류:", error);
             setUploadError(
-              "이미지 업로드 중 오류가 발생했습니다: " + error.message
+              "이미지 업로드 중 오류가 발생했습니다: " + error.message,
             );
           },
           async () => {
@@ -123,7 +123,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
               console.error("다운로드 URL 가져오기 실패:", err);
               setUploadError("이미지 URL을 가져오는데 실패했습니다.");
             }
-          }
+          },
         );
       } catch (error) {
         console.error("이미지 압축 오류:", error);

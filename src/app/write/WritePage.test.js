@@ -110,14 +110,14 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
         expect(screen.getByPlaceholderText("Title")).toBeInTheDocument();
         expect(screen.getByTestId("mock-react-quill")).toBeInTheDocument();
         expect(
-          screen.getByRole("button", { name: /Publish/i })
+          screen.getByRole("button", { name: /Publish/i }),
         ).toBeInTheDocument();
         expect(screen.getByTestId("mock-image-uploader")).toBeInTheDocument();
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
     expect(
-      screen.queryByTestId("mock-post-setting-modal")
+      screen.queryByTestId("mock-post-setting-modal"),
     ).not.toBeInTheDocument();
   });
 
@@ -165,7 +165,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     });
     expect(PostSettingModal).toHaveBeenCalledWith(
       expect.objectContaining({ isOpen: true }),
-      {}
+      {},
     );
   });
 
@@ -185,7 +185,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     expect(mockAlert).toHaveBeenCalledWith("제목을 입력해주세요.");
 
     expect(
-      screen.queryByTestId("mock-post-setting-modal")
+      screen.queryByTestId("mock-post-setting-modal"),
     ).not.toBeInTheDocument();
   });
 
@@ -205,7 +205,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
 
     expect(mockAlert).toHaveBeenCalledWith("내용을 입력해주세요.");
     expect(
-      screen.queryByTestId("mock-post-setting-modal")
+      screen.queryByTestId("mock-post-setting-modal"),
     ).not.toBeInTheDocument();
   });
 
@@ -233,14 +233,14 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByTestId("mock-post-setting-modal")
+        screen.queryByTestId("mock-post-setting-modal"),
       ).not.toBeInTheDocument();
     });
   });
 
   test("수정 모드에서 '수정하기' 버튼이 표시된다", async () => {
     useSearchParams.mockReturnValue(
-      new URLSearchParams("edit=true&slug=test-slug")
+      new URLSearchParams("edit=true&slug=test-slug"),
     );
 
     jest.spyOn(global, "fetch").mockImplementation((url) => {
@@ -270,7 +270,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     render(<WritePage />);
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /수정하기/i })
+        screen.getByRole("button", { name: /수정하기/i }),
       ).toBeInTheDocument();
       expect(screen.getByPlaceholderText("Title")).toHaveValue("기존 제목");
       expect(screen.getByTestId("quill-textarea")).toHaveValue("기존 내용");

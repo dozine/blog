@@ -2,7 +2,7 @@ import { Quill } from "react-quill-new";
 
 // Import the image resize module
 const ImageResize = import("quill-image-resize-module-react").then(
-  (module) => module.default || module
+  (module) => module.default || module,
 );
 
 // Register the module after it's been imported

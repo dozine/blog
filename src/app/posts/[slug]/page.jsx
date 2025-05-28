@@ -79,7 +79,12 @@ const SinglePage = () => {
             <div className={styles.user}>
               {data?.user?.img && (
                 <div className={styles.userImageContainer}>
-                  <Image src={data.user.img} alt="" fill className={styles.avatar} />
+                  <Image
+                    src={data.user.img}
+                    alt=""
+                    fill
+                    className={styles.avatar}
+                  />
                 </div>
               )}
               <div className={styles.userTextContainer}>
@@ -107,7 +112,10 @@ const SinglePage = () => {
             {/* 메뉴 버튼 추가 */}
             {session.status === "authenticated" && (
               <div className={styles.menuContainer}>
-                <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
+                <button
+                  className={styles.menuButton}
+                  onClick={() => setMenuOpen(!menuOpen)}
+                >
                   ⋮
                 </button>
                 {menuOpen && (
@@ -116,7 +124,10 @@ const SinglePage = () => {
                     <button className={styles.menuItem} onClick={handleEdit}>
                       수정하기
                     </button>
-                    <button className={styles.menuItem} onClick={() => setIsDeleteModalOpen(true)}>
+                    <button
+                      className={styles.menuItem}
+                      onClick={() => setIsDeleteModalOpen(true)}
+                    >
                       삭제하기
                     </button>
                     <PostDeleteModal
@@ -149,7 +160,10 @@ const SinglePage = () => {
 
       <div className={styles.content}>
         <div className={styles.post}>
-          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data?.desc }} />
+          <div
+            className="ql-editor"
+            dangerouslySetInnerHTML={{ __html: data?.desc }}
+          />
         </div>
       </div>
     </div>
