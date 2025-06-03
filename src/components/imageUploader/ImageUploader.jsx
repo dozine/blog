@@ -1,12 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, getStorage } from "firebase/storage";
 
 import styles from "./imageUploader.module.css";
 import { app } from "@/app/utils/firebase";
@@ -49,7 +44,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
               resolve(new File([blob], file.name, { type: file.type }));
             },
             file.type,
-            0.8,
+            0.8
           );
         };
         img.src = e.target.result;
@@ -70,12 +65,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
           return;
         }
 
-        const validTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
+        const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
         if (!validTypes.includes(file.type)) {
           setUploadError("지원되는 이미지 형식은 JPEG, PNG, GIF, WEBP입니다.");
           return;
@@ -92,15 +82,12 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setUploadProgress(progress);
           },
           (error) => {
             console.error("업로드 오류:", error);
-            setUploadError(
-              "이미지 업로드 중 오류가 발생했습니다: " + error.message,
-            );
+            setUploadError("이미지 업로드 중 오류가 발생했습니다: " + error.message);
           },
           async () => {
             try {
@@ -123,7 +110,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
               console.error("다운로드 URL 가져오기 실패:", err);
               setUploadError("이미지 URL을 가져오는데 실패했습니다.");
             }
-          },
+          }
         );
       } catch (error) {
         console.error("이미지 압축 오류:", error);
@@ -174,10 +161,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }) => {
       {file && uploadProgress < 100 && uploadProgress > 0 && (
         <div className={styles.uploadStatus}>
           <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${uploadProgress}%` }}
-            ></div>
+            <div className={styles.progressFill} style={{ width: `${uploadProgress}%` }}></div>
           </div>
           <span>{uploadProgress.toFixed(0)}% 업로드됨</span>
         </div>

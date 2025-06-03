@@ -19,9 +19,7 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
     if (!selectedCategoryId) return;
 
     // 선택한 카테고리가 uncategorized인지 확인
-    const selectedCategory = categories?.find(
-      (cat) => (cat._id || cat.id) === selectedCategoryId,
-    );
+    const selectedCategory = categories?.find((cat) => (cat._id || cat.id) === selectedCategoryId);
 
     if (selectedCategory?.slug === "uncategorized") {
       setError("'미분류' 카테고리는 삭제할 수 없습니다.");
@@ -67,10 +65,7 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
         {categories
           ?.filter((cat) => cat.slug !== "uncategorized")
           .map((category) => (
-            <option
-              key={category._id || category.id}
-              value={category._id || category.id}
-            >
+            <option key={category._id || category.id} value={category._id || category.id}>
               {category.title}
             </option>
           ))}
@@ -98,8 +93,7 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
           onClick={handleDeleteSubmit}
           disabled={!selectedCategoryId || isLoading}
           style={{
-            cursor:
-              !selectedCategoryId || isLoading ? "not-allowed" : "pointer",
+            cursor: !selectedCategoryId || isLoading ? "not-allowed" : "pointer",
           }}
         >
           {isLoading ? "처리중..." : "삭제"}

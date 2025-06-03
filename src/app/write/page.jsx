@@ -17,8 +17,7 @@ const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 const registerImageResize = async () => {
   if (typeof window !== "undefined") {
     const Quill = (await import("react-quill-new")).Quill;
-    const ImageResize = (await import("quill-image-resize-module-react"))
-      .default;
+    const ImageResize = (await import("quill-image-resize-module-react")).default;
     Quill.register("modules/imageResize", ImageResize);
   }
 };
@@ -228,10 +227,7 @@ const WritePage = () => {
       {/* 에디터 영역 */}
       <div className={styles.editor}>
         {/* 이미지 업로더 컴포넌트 */}
-        <ImageUploader
-          onImageUploaded={handleImageUploaded}
-          quillRef={quillRef}
-        />
+        <ImageUploader onImageUploaded={handleImageUploaded} quillRef={quillRef} />
 
         {/* Quill 에디터 */}
         <ReactQuill

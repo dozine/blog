@@ -11,15 +11,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 jest.mock("@/components/postSettingModal/PostSettingModal", () => ({
   __esModule: true,
-  default:
-    require("../../__mocks__/@/components/PostSettingModal/PostSettingModal")
-      .default,
+  default: require("../../__mocks__/@/components/PostSettingModal/PostSettingModal").default,
 }));
 
 jest.mock("@/components/imageUploader/ImageUploader", () => ({
   __esModule: true,
-  default: require("../../__mocks__/@/components/ImageUploader/ImageUploader")
-    .default,
+  default: require("../../__mocks__/@/components/ImageUploader/ImageUploader").default,
 }));
 
 describe("WritePage (심플 핵심 기능 테스트)", () => {
@@ -109,16 +106,12 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
       () => {
         expect(screen.getByPlaceholderText("Title")).toBeInTheDocument();
         expect(screen.getByTestId("mock-react-quill")).toBeInTheDocument();
-        expect(
-          screen.getByRole("button", { name: /Publish/i }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /Publish/i })).toBeInTheDocument();
         expect(screen.getByTestId("mock-image-uploader")).toBeInTheDocument();
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     );
-    expect(
-      screen.queryByTestId("mock-post-setting-modal"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mock-post-setting-modal")).not.toBeInTheDocument();
   });
 
   test("제목 입력 필드에 텍스트를 입력할 수 있다", async () => {
@@ -163,10 +156,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     await waitFor(() => {
       expect(screen.getByTestId("mock-post-setting-modal")).toBeInTheDocument();
     });
-    expect(PostSettingModal).toHaveBeenCalledWith(
-      expect.objectContaining({ isOpen: true }),
-      {},
-    );
+    expect(PostSettingModal).toHaveBeenCalledWith(expect.objectContaining({ isOpen: true }), {});
   });
 
   test("Publish 버튼 클릭 시 제목이 비어있으면 경고 메시지를 표시한다", async () => {
@@ -184,9 +174,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
 
     expect(mockAlert).toHaveBeenCalledWith("제목을 입력해주세요.");
 
-    expect(
-      screen.queryByTestId("mock-post-setting-modal"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mock-post-setting-modal")).not.toBeInTheDocument();
   });
 
   test("Publish 버튼 클릭 시 내용이 비어있으면 경고 메시지를 표시한다", async () => {
@@ -204,9 +192,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     await user.click(publishButton);
 
     expect(mockAlert).toHaveBeenCalledWith("내용을 입력해주세요.");
-    expect(
-      screen.queryByTestId("mock-post-setting-modal"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mock-post-setting-modal")).not.toBeInTheDocument();
   });
 
   test("게시 설정 모달의 닫기 버튼 클릭 시 모달이 닫힌다", async () => {
@@ -232,16 +218,12 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
     await user.click(mockModalCloseButton);
 
     await waitFor(() => {
-      expect(
-        screen.queryByTestId("mock-post-setting-modal"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByTestId("mock-post-setting-modal")).not.toBeInTheDocument();
     });
   });
 
   test("수정 모드에서 '수정하기' 버튼이 표시된다", async () => {
-    useSearchParams.mockReturnValue(
-      new URLSearchParams("edit=true&slug=test-slug"),
-    );
+    useSearchParams.mockReturnValue(new URLSearchParams("edit=true&slug=test-slug"));
 
     jest.spyOn(global, "fetch").mockImplementation((url) => {
       if (url === "/api/posts/test-slug") {
@@ -269,9 +251,7 @@ describe("WritePage (심플 핵심 기능 테스트)", () => {
 
     render(<WritePage />);
     await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: /수정하기/i }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /수정하기/i })).toBeInTheDocument();
       expect(screen.getByPlaceholderText("Title")).toHaveValue("기존 제목");
       expect(screen.getByTestId("quill-textarea")).toHaveValue("기존 내용");
     });

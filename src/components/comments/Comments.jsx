@@ -22,7 +22,7 @@ const Comments = ({ postSlug }) => {
 
   const { data, mutate, isLoading } = useSWR(
     `http://localhost:3000/api/comments?postSlug=${postSlug}`,
-    fetcher,
+    fetcher
   );
 
   const [desc, setDesc] = useState("");
@@ -47,7 +47,7 @@ const Comments = ({ postSlug }) => {
         (currentData) => {
           return [newComment, ...(currentData || [])];
         },
-        { revalidate: false },
+        { revalidate: false }
       );
       setDesc("");
     } catch (error) {
@@ -88,9 +88,7 @@ const Comments = ({ postSlug }) => {
                     />
                   )}
                   <div className={styles.userInfo}>
-                    <span className={styles.username}>
-                      {item?.user?.name || "Anounymous"}
-                    </span>
+                    <span className={styles.username}>{item?.user?.name || "Anounymous"}</span>
                     <span className={styles.date}>{item.createdAt}</span>
                   </div>
                 </div>

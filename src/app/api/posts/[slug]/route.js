@@ -22,10 +22,7 @@ export const GET = async (req, { params }) => {
       });
     }
 
-    if (
-      !postExists.isPublished &&
-      session?.user.email !== postExists.user.email
-    ) {
+    if (!postExists.isPublished && session?.user.email !== postExists.user.email) {
       return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
         status: 403,
       });
@@ -44,9 +41,7 @@ export const GET = async (req, { params }) => {
     return new NextResponse(JSON.stringify(formattedPost), { status: 200 });
   } catch (err) {
     console.log("Error", err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }, { status: 500 }),
-    );
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
   }
 };
 
@@ -54,9 +49,7 @@ export const GET = async (req, { params }) => {
 export const DELETE = async (req, { params }) => {
   const session = await getAuthSession();
   if (!session) {
-    return new NextResponse(
-      JSON.stringify({ message: "Unauthorized" }, { status: 401 }),
-    );
+    return new NextResponse(JSON.stringify({ message: "Unauthorized" }, { status: 401 }));
   }
   const { slug } = await params;
   try {
@@ -64,14 +57,10 @@ export const DELETE = async (req, { params }) => {
       where: { slug },
     });
     if (!post) {
-      return new NextResponse(
-        JSON.stringify({ message: "Post not found" }, { status: 404 }),
-      );
+      return new NextResponse(JSON.stringify({ message: "Post not found" }, { status: 404 }));
     }
     if (post.userEmail !== session.user.email) {
-      return new NextResponse(
-        JSON.stringify({ message: "Unauthorized" }, { status: 403 }),
-      );
+      return new NextResponse(JSON.stringify({ message: "Unauthorized" }, { status: 403 }));
     }
 
     await prisma.postTag.deleteMany({
@@ -79,14 +68,10 @@ export const DELETE = async (req, { params }) => {
     });
 
     await prisma.post.delete({ where: { slug } });
-    return new NextResponse(
-      JSON.stringify({ message: "Post deleted" }, { status: 200 }),
-    );
+    return new NextResponse(JSON.stringify({ message: "Post deleted" }, { status: 200 }));
   } catch (err) {
     console.error("Errror deleting post:", err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }, { status: 500 }),
-    );
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
   }
 };
 
@@ -104,15 +89,11 @@ export const PUT = async (req, { params }) => {
     const body = await req.json();
     const { title, desc, img, tagIds, isPublished } = body;
 
-    const formattedImg = Array.isArray(img)
-      ? img
-      : typeof img === "string"
-        ? [img]
-        : [];
+    const formattedImg = Array.isArray(img) ? img : typeof img === "string" ? [img] : [];
 
     if (!title || !desc) {
       return new NextResponse(
-        JSON.stringify({ message: "Missing required fields" }, { status: 400 }),
+        JSON.stringify({ message: "Missing required fields" }, { status: 400 })
       );
     }
 
@@ -183,9 +164,6 @@ export const PUT = async (req, { params }) => {
     return new NextResponse(JSON.stringify(result), { status: 200 });
   } catch (err) {
     console.log("Error updating post:", err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }),
-      { status: 500 },
-    );
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }), { status: 500 });
   }
 };

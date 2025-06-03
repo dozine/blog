@@ -1,10 +1,4 @@
-import {
-  render,
-  screen,
-  waitFor,
-  act,
-  fireEvent,
-} from "@testing-library/react";
+import { render, screen, waitFor, act, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PostSettingModal from "./PostSettingModal";
 import { server } from "../../__mocks__/server";
@@ -44,8 +38,7 @@ const createMockProps = () => ({
   ],
   availableTags: mockAvailableTags,
   setAvailableTags: jest.fn((newTags) => {
-    mockAvailableTags =
-      typeof newTags === "function" ? newTags(mockAvailableTags) : newTags;
+    mockAvailableTags = typeof newTags === "function" ? newTags(mockAvailableTags) : newTags;
     return newTags;
   }),
   onPublish: jest.fn(),
@@ -78,18 +71,14 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
       jest.runAllTimers();
     });
 
-    expect(
-      screen.getByRole("heading", { name: /게시 설정/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /게시 설정/i })).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/태그 입력/i)).toBeInTheDocument();
     jest.useRealTimers();
   });
 
   test("isOpen이 False이면 모달이 렌더링되지 않습니다.", () => {
     render(<PostSettingModal {...currentMockProps} isOpen={false} />);
-    expect(
-      screen.queryByRole("heading", { name: /게시 설정/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /게시 설정/i })).not.toBeInTheDocument();
   });
 
   test('calls onClose when "취소" button is clicked', async () => {
@@ -114,7 +103,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     await user.keyboard("{enter}");
     await waitFor(() => {
       expect(currentMockProps.setTags).toHaveBeenCalledWith(
-        expect.arrayContaining([{ id: 1, name: "react" }]),
+        expect.arrayContaining([{ id: 1, name: "react" }])
       );
     });
     expect(currentMockProps.setTagInput).toHaveBeenCalledWith("");
@@ -212,7 +201,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     await user.type(tagInput, "tag6");
     await user.keyboard("{enter}");
     expect(currentMockProps.setTags).not.toHaveBeenCalledWith(
-      expect.arrayContaining([{ id: expect.any(Number), name: "tag6" }]),
+      expect.arrayContaining([{ id: expect.any(Number), name: "tag6" }])
     );
     alertSpy.mockRestore();
   });
@@ -245,9 +234,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     currentMockProps = createMockProps();
     rerender(<PostSettingModal {...currentMockProps} />);
     await waitFor(() => {
-      expect(
-        screen.getByRole("checkbox", { name: /공개 설정/i }),
-      ).toBeChecked();
+      expect(screen.getByRole("checkbox", { name: /공개 설정/i })).toBeChecked();
     });
     currentMockProps.setIsPublished.mockClear();
     await user.click(publishCheckbox);
@@ -256,9 +243,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     currentMockProps = createMockProps();
     rerender(<PostSettingModal {...currentMockProps} />);
     await waitFor(() => {
-      expect(
-        screen.getByRole("checkbox", { name: /공개 설정/i }),
-      ).not.toBeChecked();
+      expect(screen.getByRole("checkbox", { name: /공개 설정/i })).not.toBeChecked();
     });
   });
 
@@ -266,9 +251,7 @@ describe("PostSettingModal (핵심 기능 테스트)", () => {
     const user = userEvent.setup();
     render(<PostSettingModal {...currentMockProps} />);
 
-    const publishButton = await waitFor(() =>
-      screen.getByRole("button", { name: /게시하기/i }),
-    );
+    const publishButton = await waitFor(() => screen.getByRole("button", { name: /게시하기/i }));
     await user.click(publishButton);
 
     expect(currentMockProps.onPublish).toHaveBeenCalledTimes(1);

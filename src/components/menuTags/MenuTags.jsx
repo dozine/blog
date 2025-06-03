@@ -19,9 +19,7 @@ const MenuTags = () => {
         }
         const data = await res.json();
 
-        const uniqueTags = Array.from(
-          new Map(data.map((tag) => [tag.name, tag])).values(),
-        );
+        const uniqueTags = Array.from(new Map(data.map((tag) => [tag.name, tag])).values());
         setTags(uniqueTags);
       } catch (err) {
         console.error("태그 불러오기 오류", err);
@@ -42,11 +40,7 @@ const MenuTags = () => {
     <div className={styles.container}>
       <div className={styles.tagGrid}>
         {visibleTags.map((tag) => (
-          <Link
-            href={`/tags?tags=${tag.name}`}
-            key={tag.id || tag.name}
-            className={styles.tag}
-          >
+          <Link href={`/tags?tags=${tag.name}`} key={tag.id || tag.name} className={styles.tag}>
             {tag.name}
           </Link>
         ))}
@@ -54,10 +48,7 @@ const MenuTags = () => {
       {hasMoreTags && (
         <div className={styles.viewMoreContainer}>
           {showAll ? (
-            <button
-              className={styles.viewMoreBtn}
-              onClick={() => setShowAll(false)}
-            >
+            <button className={styles.viewMoreBtn} onClick={() => setShowAll(false)}>
               접기
             </button>
           ) : (

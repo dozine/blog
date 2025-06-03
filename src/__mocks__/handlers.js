@@ -13,15 +13,10 @@ export const handlers = [
     const { name } = req.body;
 
     const lowerCaseName = name.toLowerCase();
-    const foundTag = _existingTags.find(
-      (tag) => tag.name.toLowerCase() === lowerCaseName,
-    );
+    const foundTag = _existingTags.find((tag) => tag.name.toLowerCase() === lowerCaseName);
 
     if (foundTag) {
-      return res(
-        ctx.status(409),
-        ctx.json({ message: "Tag already exists", tag: foundTag }),
-      );
+      return res(ctx.status(409), ctx.json({ message: "Tag already exists", tag: foundTag }));
     }
 
     const newTag = { id: _tagIdCounter++, name };

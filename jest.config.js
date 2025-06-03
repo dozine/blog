@@ -12,13 +12,6 @@ module.exports = {
   },
   moduleDirectories: ["node_modules", "<rootDir>"],
   testPathIgnorePatterns: ["/node_modules/", "/build/"],
-  collectCoverageFrom: [
-    "src/**/*.{js,jsx}",
-    "!src/index.js",
-    "!src/reportWebVitals.js",
-  ],
-  testMatch: [
-    "<rootDir>/src/**/*.test.{js,jsx}",
-    "<rootDir>/src/**/*.spec.{js,jsx}",
-  ],
+  collectCoverageFrom: ["src/**/*.{js,jsx}", "!src/index.js", "!src/reportWebVitals.js"],
+  testMatch: ["<rootDir>/src/**/*.test.{js,jsx}", "<rootDir>/src/**/*.spec.{js,jsx}"],
 };

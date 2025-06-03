@@ -33,7 +33,7 @@ const PostSettingModal = ({
       const filtered = availableTags.filter(
         (tag) =>
           tag.name.toLowerCase().includes(tagInput.toLowerCase()) &&
-          !tags.some((selectedTag) => selectedTag.id === tag.id),
+          !tags.some((selectedTag) => selectedTag.id === tag.id)
       );
       setFilteredTags(filtered);
     } else {
@@ -81,7 +81,7 @@ const PostSettingModal = ({
         // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
         if (res.status === 409) {
           const existingTag = availableTags.find(
-            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase(),
+            (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase()
           );
           if (existingTag) {
             addTag(existingTag);
@@ -134,9 +134,7 @@ const PostSettingModal = ({
               <input
                 ref={tagInputRef}
                 type="text"
-                placeholder={
-                  tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"
-                }
+                placeholder={tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"}
                 className={styles.tagInput}
                 value={tagInput}
                 onChange={(e) => {
@@ -166,11 +164,7 @@ const PostSettingModal = ({
             {showTagSuggestions && filteredTags.length > 0 && (
               <div className={styles.tagSuggestions}>
                 {filteredTags.slice(0, 5).map((tag) => (
-                  <div
-                    key={tag.id}
-                    className={styles.tagSuggestion}
-                    onClick={() => addTag(tag)}
-                  >
+                  <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
                     {tag.name}
                   </div>
                 ))}
@@ -182,10 +176,7 @@ const PostSettingModal = ({
               {tags.map((tag) => (
                 <span key={tag.id} className={styles.tagBadge}>
                   {tag.name}
-                  <button
-                    className={styles.removeTagButton}
-                    onClick={() => removeTag(tag.id)}
-                  >
+                  <button className={styles.removeTagButton} onClick={() => removeTag(tag.id)}>
                     ×
                   </button>
                 </span>
@@ -205,9 +196,7 @@ const PostSettingModal = ({
               className={styles.toggleInput}
             />
             <span className={styles.toggleSlider}></span>
-            <span className={styles.toggleText}>
-              {isPublished ? "공개됨" : "비공개"}
-            </span>
+            <span className={styles.toggleText}>{isPublished ? "공개됨" : "비공개"}</span>
           </label>
         </div>
 

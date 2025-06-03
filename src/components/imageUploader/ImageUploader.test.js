@@ -1,21 +1,10 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("firebase/storage");
 jest.mock("@/app/utils/firebase");
 
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, getStorage } from "firebase/storage";
 import ImageUploader from "./ImageUploader";
 
 const mockQuillEditor = {
@@ -78,9 +67,7 @@ describe("ImageUploader", () => {
               height: 0,
             },
           })),
-          toBlob: jest.fn((callback) =>
-            callback(new Blob(["mock-image"], { type: "image/png" })),
-          ),
+          toBlob: jest.fn((callback) => callback(new Blob(["mock-image"], { type: "image/png" }))),
           width: 0,
           height: 0,
         };
@@ -101,9 +88,7 @@ describe("ImageUploader", () => {
     jest.restoreAllMocks();
   });
 
-  const simulateFileReaderLoad = (
-    dataUrl = "data:image/png;base64,mockdata",
-  ) => {
+  const simulateFileReaderLoad = (dataUrl = "data:image/png;base64,mockdata") => {
     act(() => {
       mockFileReader.result = dataUrl;
       if (mockFileReader.onload) {
@@ -137,7 +122,7 @@ describe("ImageUploader", () => {
   };
 
   const setupSuccessfulUpload = (
-    downloadUrl = "http://mock-success-url.com/uploaded-image.png",
+    downloadUrl = "http://mock-success-url.com/uploaded-image.png"
   ) => {
     getDownloadURL.mockImplementation(async () => {
       const resolvedUrl = await Promise.resolve(downloadUrl);
@@ -150,53 +135,44 @@ describe("ImageUploader", () => {
       return resolvedUrl;
     });
 
-    mockUploadTask.on.mockImplementation(
-      (eventType, onProgress, onError, onComplete) => {
-        if (eventType === "state_changed") {
-          Promise.resolve().then(() => {
-            act(() => {
-              onProgress({
-                bytesTransferred: 5000,
-                totalBytes: 10000,
-                state: "running",
-              });
+    mockUploadTask.on.mockImplementation((eventType, onProgress, onError, onComplete) => {
+      if (eventType === "state_changed") {
+        Promise.resolve().then(() => {
+          act(() => {
+            onProgress({
+              bytesTransferred: 5000,
+              totalBytes: 10000,
+              state: "running",
             });
           });
-          Promise.resolve().then(async () => {
-            await act(async () => {
-              onComplete();
-            });
+        });
+        Promise.resolve().then(async () => {
+          await act(async () => {
+            onComplete();
           });
-        }
-      },
-    );
+        });
+      }
+    });
   };
 
   const setupFailedUpload = (errorMessage = "Upload failed") => {
-    mockUploadTask.on.mockImplementation(
-      (eventType, onProgress, onError, onComplete) => {
-        if (eventType === "state_changed") {
-          Promise.resolve().then(() => {
-            act(() => {
-              const error = new Error(errorMessage);
-              error.code = "storage/unknown";
-              error.message = errorMessage;
-              error.name = "StorageError";
-              onError(error);
-            });
+    mockUploadTask.on.mockImplementation((eventType, onProgress, onError, onComplete) => {
+      if (eventType === "state_changed") {
+        Promise.resolve().then(() => {
+          act(() => {
+            const error = new Error(errorMessage);
+            error.code = "storage/unknown";
+            error.message = errorMessage;
+            error.name = "StorageError";
+            onError(error);
           });
-        }
-      },
-    );
+        });
+      }
+    });
   };
 
   test("클릭 시 파일 선택 UI가 토글된다", async () => {
-    render(
-      <ImageUploader
-        onImageUploaded={mockOnImageUploaded}
-        quillRef={mockQuillRef}
-      />,
-    );
+    render(<ImageUploader onImageUploaded={mockOnImageUploaded} quillRef={mockQuillRef} />);
 
     const plusButton = screen.getByRole("button", { name: "" });
     expect(document.getElementById("image")).not.toBeInTheDocument();
@@ -207,20 +183,13 @@ describe("ImageUploader", () => {
   });
 
   test("파일 크기가 5MB를 초과하면 오류 메시지를 표시한다", async () => {
-    render(
-      <ImageUploader
-        onImageUploaded={mockOnImageUploaded}
-        quillRef={mockQuillRef}
-      />,
-    );
+    render(<ImageUploader onImageUploaded={mockOnImageUploaded} quillRef={mockQuillRef} />);
 
     await userEvent.click(screen.getByRole("button", { name: "" }));
     const fileInput = document.getElementById("image");
-    const largeFile = new File(
-      [new ArrayBuffer(5 * 1024 * 1024 + 1)],
-      "large.png",
-      { type: "image/png" },
-    );
+    const largeFile = new File([new ArrayBuffer(5 * 1024 * 1024 + 1)], "large.png", {
+      type: "image/png",
+    });
 
     await act(async () => {
       await userEvent.upload(fileInput, largeFile);
@@ -241,7 +210,7 @@ describe("ImageUploader", () => {
 
         expect(hasFileSizeError).toBe(true);
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     );
 
     expect(uploadBytesResumable).not.toHaveBeenCalled();
@@ -250,12 +219,7 @@ describe("ImageUploader", () => {
   test("Firebase 업로드 중 오류가 발생하면 오류 메시지를 표시한다", async () => {
     setupFailedUpload("Firebase upload failed!");
 
-    render(
-      <ImageUploader
-        onImageUploaded={mockOnImageUploaded}
-        quillRef={mockQuillRef}
-      />,
-    );
+    render(<ImageUploader onImageUploaded={mockOnImageUploaded} quillRef={mockQuillRef} />);
 
     await userEvent.click(screen.getByRole("button", { name: "" }));
     const fileInput = document.getElementById("image");
@@ -284,19 +248,14 @@ describe("ImageUploader", () => {
 
         expect(hasUploadError).toBe(true);
       },
-      { timeout: 5000 },
+      { timeout: 5000 }
     );
 
     expect(mockOnImageUploaded).not.toHaveBeenCalled();
   }, 10000);
 
   test("디버깅: 컴포넌트 렌더링 및 기본 동작 확인", async () => {
-    render(
-      <ImageUploader
-        onImageUploaded={mockOnImageUploaded}
-        quillRef={mockQuillRef}
-      />,
-    );
+    render(<ImageUploader onImageUploaded={mockOnImageUploaded} quillRef={mockQuillRef} />);
 
     console.log("=== 초기 렌더링 상태 ===");
     console.log("HTML:", document.body.innerHTML);
