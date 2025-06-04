@@ -13,16 +13,19 @@ const CardList = () => {
   const page = Number(searchParams.get("page")) || 1;
   const cat = searchParams.get("cat") || "";
   const tags = searchParams.get("tags") || "";
-  const formattedTags = tags.replace(/,/g, ".");
+
   const [posts, setPosts] = useState([]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(`/api/posts?page=${page}&cat=${cat || ""}&tags=${formattedTags}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (!res.ok) {
           throw new Error("Failed");
         }
