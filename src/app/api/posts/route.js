@@ -13,7 +13,7 @@ export const GET = async (req) => {
   const page = pageParam ? parseInt(pageParam, 10) : 1;
   const skip = Math.max(0, POST_PER_PAGE * (page - 1));
 
-  const selectedTags = tagsParam ? tagsParam.split(",") : [];
+  const selectedTags = tagsParam ? tagsParam.split(".") : [];
   const where = {
     isPublished: true,
     ...(cat && { catSlug: cat }),
@@ -63,7 +63,9 @@ export const GET = async (req) => {
     });
   } catch (err) {
     console.log(err);
-    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
+    return new NextResponse(
+      JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
+    );
   }
 };
 
@@ -72,13 +74,19 @@ export const POST = async (req) => {
   const session = await getAuthSession();
 
   if (!session) {
-    return new NextResponse(JSON.stringify({ message: "Not Authenticate" }, { status: 401 }));
+    return new NextResponse(
+      JSON.stringify({ message: "Not Authenticate" }, { status: 401 })
+    );
   }
 
   try {
     const body = await req.json();
     const { tags: tagIds, isPublished, ...postData } = body;
-    const safeImg = Array.isArray(body.img) ? body.img : body.img ? [body.img] : [];
+    const safeImg = Array.isArray(body.img)
+      ? body.img
+      : body.img
+        ? [body.img]
+        : [];
 
     if (!body.slug || !body.title) {
       return new NextResponse(
@@ -130,6 +138,8 @@ export const POST = async (req) => {
     return new NextResponse(JSON.stringify(formattedResult), { status: 200 });
   } catch (err) {
     console.log("Error creating post:", err);
-    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
+    return new NextResponse(
+      JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
+    );
   }
 };
