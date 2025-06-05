@@ -13,11 +13,13 @@ import Script from "next/script";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata = {
@@ -29,6 +31,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta httpEquiv="Cross-Origin-Opener-Policy" content="same-origin" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
           strategy="afterInteractive"
@@ -40,7 +53,12 @@ export default function RootLayout({ children }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-4QDHKQH1M8');
+            gtag('config', 'G-4QDHKQH1M8',{
+            anonymize_ip: true,
+            cookie_flags: 'SameSite=None; Secure',
+            cookie_expires: 63072000,//
+            send_page_view: false,
+            });
           `}
         </Script>
         <link
@@ -51,6 +69,13 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap"
           rel="stylesheet"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
@@ -60,13 +85,14 @@ export default function RootLayout({ children }) {
                 <div className="wrapper">
                   <Navbar />
                   {children}
-                  <Analytics />
+
                   <Footer />
                 </div>
               </div>
             </ThemeProvider>
           </ThemeContextProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
