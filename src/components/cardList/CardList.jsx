@@ -20,12 +20,9 @@ const CardList = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(
-          `/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`,
-          {
-            cache: "no-store",
-          }
-        );
+        const res = await fetch(`/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`, {
+          cache: "no-store",
+        });
         if (!res.ok) {
           throw new Error("Failed");
         }

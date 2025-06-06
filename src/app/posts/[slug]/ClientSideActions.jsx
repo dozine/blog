@@ -69,10 +69,7 @@ const ClientSideActions = ({ data, slug }) => {
             <button className={styles.menuItem} onClick={handleEdit}>
               수정하기
             </button>
-            <button
-              className={styles.menuItem}
-              onClick={() => setIsDeleteModalOpen(true)}
-            >
+            <button className={styles.menuItem} onClick={() => setIsDeleteModalOpen(true)}>
               삭제하기
             </button>
           </div>

@@ -141,14 +141,9 @@ describe("TagsPage", () => {
       const newTagButton = screen.getByTestId("new-tag-button");
       await user.click(newTagButton);
 
-      expect(mockParams.set).toHaveBeenCalledWith(
-        "tags",
-        "react.javascript.newTag"
-      );
+      expect(mockParams.set).toHaveBeenCalledWith("tags", "react.javascript.newTag");
       expect(mockParams.set).toHaveBeenCalledWith("page", "1");
-      expect(mockPush).toHaveBeenCalledWith(
-        "/tags?page=1&tags=react.javascript.newTag"
-      );
+      expect(mockPush).toHaveBeenCalledWith("/tags?page=1&tags=react.javascript.newTag");
     });
 
     test("기존 태그를 제거한다", async () => {
