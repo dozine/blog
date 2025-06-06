@@ -1,85 +1,92 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./singlePage.module.css";
 import Image from "next/image";
-import Comments from "@/components/comments/Comments";
-import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import PostDeleteModal from "@/components/modal/PostDeleteModal";
-import "react-quill-new/dist/quill.bubble.css";
+import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
 
-const SinglePage = () => {
-  const { slug } = useParams();
-  const router = useRouter();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const session = useSession();
+const ClientSideActions = dynamic(() => import("./ClientSideActions"), {
+  loading: () => <p>로딩 중...</p>,
+});
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!slug) return;
-    const getData = async () => {
-      try {
-        const res = await fetch(`/api/posts/${slug}?popular=true`, {
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          throw new Error("Failed!");
-        }
-        const result = await res.json();
-        if (!result || typeof result !== "object" || !result.title) {
-          throw new Error("Invalid data received");
-        }
-        setData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getData();
-  }, [slug]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  const handleDelete = async () => {
-    if (!slug) return;
-    try {
-      const res = await fetch(`/api/posts/${slug}`, {
-        method: "DELETE",
-        cache: "no-store",
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to delete post");
-      alert("삭제되었습니다.");
-      router.push("/blog");
-    } catch (err) {
-      console.error("삭제 오류", err);
+async function getPostData(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL;
+    if (!baseUrl) {
+      console.error("NEXT_PUBLIC_URL or NEXTAUTH_URL is not defined.");
+      return null;
     }
-  };
 
-  const handleEdit = () => {
-    router.push(`/write?edit=true&slug=${slug}`);
-  };
+    const res = await fetch(`${baseUrl}/api/posts/${slug}?popular=true`, {
+      next: { revalidate: 3600 },
+    });
 
-  const handleTagClick = (tagName) => {
-    router.push(`/tags?tags=${tagName}`);
+    if (!res.ok) {
+      console.error(
+        `Error fetching post data: ${res.status} ${res.statusText}`
+      );
+      return null;
+    }
+
+    const data = await res.json();
+
+    if (!data || typeof data !== "object" || !data.title) {
+      console.warn("Invalid data received for post:", data);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error("Error fetching post data:", error);
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const data = await getPostData(slug);
+
+  if (!data) {
+    return {
+      title: "포스트를 찾을 수 없습니다",
+    };
+  }
+
+  return {
+    title: data.title,
+    description: data.desc
+      ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "")
+      : "",
   };
+}
+
+const SinglePage = async ({ params }) => {
+  const { slug } = await params;
+
+  const data = await getPostData(slug);
+  if (!data) {
+    notFound();
+  }
 
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
         <div className={styles.textContainer}>
-          <h1 className={styles.title}>{data?.title}</h1>
+          <h1 className={styles.title}>{data.title}</h1>
           <div className={styles.userContainer}>
             <div className={styles.user}>
-              {data?.user?.img && (
+              {data.user?.img && (
                 <div className={styles.userImageContainer}>
-                  <Image src={data.user.img} alt="" fill className={styles.avatar} />
+                  <Image
+                    src={data.user.img}
+                    alt={
+                      data.user.name
+                        ? `${data.user.name}의 아바타`
+                        : "사용자 아바타"
+                    }
+                    fill
+                    className={styles.avatar}
+                    sizes="(max-width: 768px) 40px, 50px"
+                    priority
+                  />
                 </div>
               )}
               <div className={styles.userTextContainer}>
@@ -92,55 +99,22 @@ const SinglePage = () => {
                     minute: "2-digit",
                   })}
                 </span>
-                {session.status === "authenticated" &&
-                  session.data?.user?.email === data?.user?.email && (
-                    <div className={styles.status}>
-                      {data.isPublished ? (
-                        <span className={styles.published}>공개</span>
-                      ) : (
-                        <span className={styles.unpublished}>비공개</span>
-                      )}
-                    </div>
-                  )}
+
+                <ClientSideActions data={data} slug={slug} />
               </div>
             </div>
-            {/* 메뉴 버튼 추가 */}
-            {session.status === "authenticated" && (
-              <div className={styles.menuContainer}>
-                <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
-                  ⋮
-                </button>
-                {menuOpen && (
-                  <div className={styles.menu}>
-                    .
-                    <button className={styles.menuItem} onClick={handleEdit}>
-                      수정하기
-                    </button>
-                    <button className={styles.menuItem} onClick={() => setIsDeleteModalOpen(true)}>
-                      삭제하기
-                    </button>
-                    <PostDeleteModal
-                      isOpen={isDeleteModalOpen}
-                      onClose={() => setIsDeleteModalOpen(false)}
-                      onDelete={handleDelete}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
-          {/* 태그 섹션 추가 */}
           {data?.tags && data.tags.length > 0 && (
             <div className={styles.tagContainer}>
               {data.tags.map((tag) => (
-                <span
+                <a
                   key={tag.id || tag.name}
+                  href={`/tags?tags=${encodeURIComponent(tag.name)}`}
                   className={styles.tag}
-                  onClick={() => handleTagClick(tag.name)}
                 >
                   #{tag.name}
-                </span>
+                </a>
               ))}
             </div>
           )}
@@ -149,7 +123,10 @@ const SinglePage = () => {
 
       <div className={styles.content}>
         <div className={styles.post}>
-          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data?.desc }} />
+          <div
+            className="ql-editor"
+            dangerouslySetInnerHTML={{ __html: data.desc }}
+          />
         </div>
       </div>
     </div>
