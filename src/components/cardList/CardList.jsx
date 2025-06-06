@@ -20,9 +20,12 @@ const CardList = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(`/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (!res.ok) {
           throw new Error("Failed");
         }
@@ -45,9 +48,9 @@ const CardList = () => {
       <h1 className={styles.title}></h1>
       <div className={styles.posts}>
         {posts.length > 0 ? (
-          posts.map((item) => (
+          posts.map((item, index) => (
             <div key={item.id}>
-              <Card item={item} />
+              <Card item={item} priority={index === 0} />
             </div>
           ))
         ) : (

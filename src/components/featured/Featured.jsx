@@ -17,12 +17,6 @@ const Featured = () => {
       desc: "Next.js를 활용한 블로그 제작 과정을 소개합니다.",
       image: "/p1.jpeg",
     },
-    {
-      id: 3,
-      title: "CSS 모듈 실전 활용법",
-      desc: "CSS 모듈을 효과적으로 사용하는 방법을 알아봅니다.",
-      image: "/p1.jpeg",
-    },
   ];
 
   const settings = {
@@ -37,13 +31,22 @@ const Featured = () => {
   };
   return (
     <div className={styles.container}>
-      <div className={styles.featuredTitle}>안녕하세요. 블로그 진도장입니다.</div>
+      <div className={styles.featuredTitle}>
+        안녕하세요. 블로그 진도장입니다.
+      </div>
 
       <Slider {...settings}>
         {featuredPosts.map((post) => (
           <div key={post.id} className={styles.slide}>
             <div className={styles.imgContainer}>
-              <Image src={post.image} alt={post.title} fill className={styles.image} />
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className={styles.image}
+                priority={index === 0}
+                sizes="(max-width: 1024px) 90vw, (max-width: 1280px) 50vw, 33vw"
+              />
             </div>
             <div className={styles.textContainer}>
               <h1 className={styles.postTitle}>{post.title}</h1>
@@ -53,16 +56,6 @@ const Featured = () => {
           </div>
         ))}
       </Slider>
-
-      {/* <div className={styles.post}>
-        <div className={styles.imgContainer}>
-          <Image src="/p1.jpeg" alt="" fill className={styles.image} />
-        </div>
-        <div className={styles.textContainer}>
-          <h1 className={styles.postTitle}>안녕하세요</h1>
-          <p className={styles.postDesc}>프론트엔드 개발자 장도진입니다.</p>
-        </div>
-      </div> */}
     </div>
   );
 };
