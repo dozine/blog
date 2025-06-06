@@ -21,9 +21,7 @@ async function getPostData(slug) {
     });
 
     if (!res.ok) {
-      console.error(
-        `Error fetching post data: ${res.status} ${res.statusText}`
-      );
+      console.error(`Error fetching post data: ${res.status} ${res.statusText}`);
       return null;
     }
 
@@ -52,9 +50,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: data.title,
-    description: data.desc
-      ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "")
-      : "",
+    description: data.desc ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "") : "",
   };
 }
 
@@ -77,11 +73,7 @@ const SinglePage = async ({ params }) => {
                 <div className={styles.userImageContainer}>
                   <Image
                     src={data.user.img}
-                    alt={
-                      data.user.name
-                        ? `${data.user.name}의 아바타`
-                        : "사용자 아바타"
-                    }
+                    alt={data.user.name ? `${data.user.name}의 아바타` : "사용자 아바타"}
                     fill
                     className={styles.avatar}
                     sizes="(max-width: 768px) 40px, 50px"
@@ -123,10 +115,7 @@ const SinglePage = async ({ params }) => {
 
       <div className={styles.content}>
         <div className={styles.post}>
-          <div
-            className="ql-editor"
-            dangerouslySetInnerHTML={{ __html: data.desc }}
-          />
+          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data.desc }} />
         </div>
       </div>
     </div>
