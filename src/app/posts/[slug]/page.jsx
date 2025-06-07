@@ -10,13 +10,7 @@ const SinglePageClient = dynamic(() => import("./singlePageClient"), {
 
 async function getPostData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL;
-    if (!baseUrl) {
-      console.error("NEXT_PUBLIC_URL or NEXTAUTH_URL is not defined.");
-      return null;
-    }
-
-    const res = await fetch(`${baseUrl}/api/posts/${slug}?popular=true`, {
+    const res = await fetch(`/api/posts/${slug}?popular=true`, {
       next: { revalidate: 3600 },
     });
 
