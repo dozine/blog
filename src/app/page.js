@@ -1,19 +1,16 @@
-"use client";
-
 import CategoryList from "@/components/categoryList/CategoryList";
 import styles from "./homepage.module.css";
-import Featured from "@/components/featured/Featured";
-import CardList from "@/components/cardList/CardList";
-import Menu from "@/components/menu/Menu";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 import RecentPosts from "@/components/recentPosts/RecentPosts";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const pageParam = searchParams.get("page");
-  const [page, setPage] = useState(pageParam ? parseInt(pageParam, 10) : 1);
+import dynamic from "next/dynamic";
 
+const Featured = dynamic(() => import("@/components/featured/Featured"), {
+  loading: () => <p>Loading featured posts...</p>,
+});
+
+export default async function Home({ searchParams }) {
+  const params = await searchParams;
+  const page = parseInt(params.page || "1", 10);
   return (
     <div className={styles.container}>
       <Featured />

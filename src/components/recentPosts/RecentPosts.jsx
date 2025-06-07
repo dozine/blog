@@ -1,29 +1,17 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./recentPosts.module.css";
 import Card from "../card/Card";
 
-const RecentPosts = () => {
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    const fetchRecent = async () => {
-      try {
-        const res = await fetch("/api/posts?page=1", {
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error("Failed to fetch recent posts");
-        const data = await res.json();
-        setPosts(data?.posts.slice(0, 5) ?? []);
-      } catch (err) {
-        console.error(err);
-        setPosts([]);
-      }
-    };
-
-    fetchRecent();
-  }, []);
+const RecentPosts = async ({ page }) => {
+  const res = await fetch(`http://localhost:3000/api/posts?page=${page}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    console.error("Failed to fetch recent posts on server");
+    return <p>포스트를 불러오는 데 실패했습니다.</p>;
+  }
+  const data = await res.json();
+  const posts = data?.posts.slice(0, 5) ?? []; // 페이지네이션 로직에 따라 slice 범위 조정 필요
 
   return (
     <div className={styles.container}>
