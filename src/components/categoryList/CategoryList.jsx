@@ -5,7 +5,11 @@ import dynamic from "next/dynamic";
 const CategoryListClient = dynamic(() => import("./CategoryListClient"), {});
 
 const CategoryListServer = async () => {
-  const res = await fetch(`/api/categories`, {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!baseUrl) {
+    console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
+  }
+  const res = await fetch(`${baseUrl}/api/categories`, {
     cache: "no-store",
   });
 

@@ -5,8 +5,12 @@ import Card from "../card/Card";
 const POSTS_PER_PAGE = 10;
 
 const CardList = async ({ page, cat, tags }) => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!baseUrl) {
+    console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
+  }
   const res = await fetch(
-    `/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
+    `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
     {
       cache: "no-store",
     }
