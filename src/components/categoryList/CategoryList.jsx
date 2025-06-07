@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const CategoryListClient = dynamic(() => import("./CategoryListClient"), {});
 
 const CategoryListServer = async () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!baseUrl) {
     console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
   }

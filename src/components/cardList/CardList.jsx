@@ -5,7 +5,7 @@ import Card from "../card/Card";
 const POSTS_PER_PAGE = 10;
 
 const CardList = async ({ page, cat, tags }) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!baseUrl) {
     console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
   }
