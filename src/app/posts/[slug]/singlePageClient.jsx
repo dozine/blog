@@ -7,7 +7,7 @@ import PostDeleteModal from "@/components/modal/PostDeleteModal";
 
 import styles from "./singlePage.module.css";
 
-const ClientSideActions = ({ data, slug }) => {
+const SinglePageClient = ({ data, slug }) => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,4 +84,4 @@ const ClientSideActions = ({ data, slug }) => {
   );
 };
 
-export default ClientSideActions;
+export default SinglePageClient;

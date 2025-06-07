@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const ClientSideActions = dynamic(() => import("./ClientSideActions"), {
+const SinglePageClient = dynamic(() => import("./singlePageClient"), {
   loading: () => <p>로딩 중...</p>,
 });
 
@@ -92,7 +92,7 @@ const SinglePage = async ({ params }) => {
                   })}
                 </span>
 
-                <ClientSideActions data={data} slug={slug} />
+                <SinglePageClient data={data} slug={slug} />
               </div>
             </div>
           </div>

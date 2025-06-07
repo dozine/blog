@@ -1,42 +1,26 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./cardList.module.css";
 import Pagination from "../pagination/Pagination";
 import Card from "../card/Card";
-import { useSearchParams } from "next/navigation";
-
 const POSTS_PER_PAGE = 10;
 
-const CardList = () => {
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get("page")) || 1;
-  const cat = searchParams.get("cat") || "";
-  const tags = searchParams.get("tags") || "";
+const CardList = async ({ page, cat, tags }) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+  const res = await fetch(
+    `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  const [posts, setPosts] = useState([]);
-  const [count, setCount] = useState(0);
+  if (!res.ok) {
+    console.error("Failed to fetch posts on server:", res.status, res.statusText);
+    return <p>포스트를 불러오는 데 실패했습니다.</p>;
+  }
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`/api/posts?page=${page}&cat=${cat || ""}&tags=${tags}`, {
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          throw new Error("Failed");
-        }
-        const data = await res.json();
-
-        setPosts(data.posts);
-        setCount(data.count);
-      } catch (error) {
-        console.error(error);
-        setPosts([]);
-      }
-    };
-    getData();
-  }, [page, cat, tags]);
+  const data = await res.json();
+  const posts = data.posts || [];
+  const count = data.count || 0;
 
   const totalPages = Math.max(1, Math.ceil(count / POSTS_PER_PAGE));
 

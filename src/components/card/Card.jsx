@@ -20,7 +20,7 @@ const Card = ({ item, priority = false }) => {
               return descText.length > 60 ? descText.substring(0, 60) + "..." : descText;
             })()}
           </p>
-          {console.log("Card received tags:", item.tags)}
+
           {item.tags && Array.isArray(item.tags) && item.tags.length > 0 && (
             <div className={styles.tagContainer}>
               {item.tags.map((tagObj) => (
