@@ -2,7 +2,8 @@ import Image from "next/image";
 import styles from "./card.module.css";
 import Link from "next/link";
 
-const Card = ({ item, priority = false }) => {
+const Card = ({ item, priority = false, index = 0 }) => {
+  const shouldPrioritize = priority || index < 3;
   return (
     <Link href={`/posts/${item.slug}`}>
       <div className={styles.container}>
@@ -16,6 +17,7 @@ const Card = ({ item, priority = false }) => {
           </div>
           <p>
             {(() => {
+              if (!item.desc) return "";
               const descText = item.desc.replace(/<[^>]+>/g, "");
               return descText.length > 60 ? descText.substring(0, 60) + "..." : descText;
             })()}
@@ -39,8 +41,10 @@ const Card = ({ item, priority = false }) => {
                 alt={item.title || "포스트 이미지"}
                 fill
                 style={{ objectFit: "cover" }}
-                priority={priority}
-                sizes="(max-width: 767px) 100vw, 280px"
+                priority={shouldPrioritize}
+                loading={shouldPrioritize ? "eager" : "lazy"}
+                sizes="(max-width:480px) 100vw, (max-width: 768px) 190vw, 280px"
+                quality={80}
               />
             </div>
           </div>

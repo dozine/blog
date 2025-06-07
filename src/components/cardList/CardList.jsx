@@ -35,7 +35,7 @@ const CardList = async ({ page, cat, tags }) => {
         {posts.length > 0 ? (
           posts.map((item, index) => (
             <div key={item.id}>
-              <Card item={item} priority={index === 0} />
+              <Card key={item.id} item={item} priority={index < 3} />
             </div>
           ))
         ) : (
