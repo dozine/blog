@@ -3,7 +3,12 @@ import styles from "./recentPosts.module.css";
 import Card from "../card/Card";
 
 const RecentPosts = async ({ page }) => {
-  const res = await fetch(`/api/posts?page=${page}`, {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!baseUrl) {
+    console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
+  }
+
+  const res = await fetch(`${baseUrl}/api/posts?page=${page}`, {
     cache: "no-store",
   });
   if (!res.ok) {
