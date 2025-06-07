@@ -10,7 +10,7 @@ const CategoryListServer = async () => {
     console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
   }
   const res = await fetch(`${baseUrl}/api/categories`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {
