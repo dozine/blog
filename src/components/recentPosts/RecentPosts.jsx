@@ -23,7 +23,7 @@ const RecentPosts = async ({ page }) => {
       <h2 className={styles.title}></h2>
       <div className={styles.posts}>
         {posts.length > 0 ? (
-          posts.map((item, index) => <Card key={item.id} item={item} priority={index === 0} />)
+          posts.map((item, index) => <Card key={item.id} item={item} priority={index < 3} />)
         ) : (
           <p>포스트가 없습니다.</p>
         )}
