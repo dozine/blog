@@ -74,10 +74,10 @@ export default function RootLayout({ children }) {
         <Analytics />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
-          strategy="afterInteractive"
+          strategy="lazyOnLoad"
         />
 
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnLoad">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
