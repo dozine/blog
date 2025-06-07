@@ -12,7 +12,7 @@ const CardList = async ({ page, cat, tags }) => {
   const res = await fetch(
     `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
     {
-      cache: "no-store",
+      next: { revalidate: 60 },
     }
   );
 
