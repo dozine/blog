@@ -50,29 +50,9 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
-          strategy="afterInteractive"
-          async
-        />
 
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-4QDHKQH1M8',{
-            anonymize_ip: true,
-            cookie_flags: 'SameSite=None; Secure',
-            cookie_expires: 63072000,//
-            send_page_view: false,
-            });
-          `}
-        </Script>
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://vitals.vercel-analytics.com" />
+        <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSansKr.variable} ${nanumGothic.variable}`}
@@ -92,6 +72,24 @@ export default function RootLayout({ children }) {
           </ThemeContextProvider>
         </AuthProvider>
         <Analytics />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-4QDHKQH1M8',{
+            anonymize_ip: true,
+            cookie_flags: 'SameSite=None; Secure',
+            cookie_expires: 63072000,//
+            send_page_view: false,
+            });
+          `}
+        </Script>
       </body>
     </html>
   );
