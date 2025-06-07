@@ -12,14 +12,36 @@ const nextConfig = {
       },
     ],
     domains: ["picsum.photos"],
+    formats: ["image/webp", "image/avif"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // 반응형 크기
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // 작은 이미지 크기
+    minimumCacheTTL: 31536000, // 1년 캐시
+    dangerouslyAllowSVG: false, // SVG 보안 강화
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   compiler: {},
+
+  experimental: {
+    optimizeCss: true, // CSS 최적화
+    optimizePackageImports: ["lucide-react", "@/components"], // 패키지 임포트 최적화
+    webVitalsAttribution: ["CLS", "LCP"], // Web Vitals 추적
+  },
+  compress: true,
+  trailingSlash: false,
+
   async headers() {
     return [
       {
         source: "/(.*)",
         headers: [
-          // CSP 헤더
+          {
+            key: "Link",
+            value: [
+              "<https://fonts.googleapis.com>; rel=preconnect",
+              "<https://fonts.gstatic.com>; rel=preconnect; crossorigin",
+              "<https://firebasestorage.googleapis.com>; rel=preconnect",
+            ].join(", "),
+          },
           {
             key: "Content-Security-Policy",
             value: `
