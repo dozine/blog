@@ -3,7 +3,7 @@ import styles from "./recentPosts.module.css";
 import Card from "../card/Card";
 
 const RecentPosts = async ({ page }) => {
-  const res = await fetch(`http://localhost:3000/api/posts?page=${page}`, {
+  const res = await fetch(`/api/posts?page=${page}`, {
     cache: "no-store",
   });
   if (!res.ok) {
