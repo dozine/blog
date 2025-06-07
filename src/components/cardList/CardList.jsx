@@ -5,16 +5,16 @@ import Card from "../card/Card";
 const POSTS_PER_PAGE = 10;
 
 const CardList = async ({ page, cat, tags }) => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
   const res = await fetch(
-    `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
+    `/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
     {
       cache: "no-store",
     }
   );
 
   if (!res.ok) {
-    console.error("Failed to fetch posts on server:", res.status, res.statusText);
+    const errorText = await res.text();
+    console.error("Failed to fetch posts on server:", res.status, res.statusText, errorText);
     return <p>포스트를 불러오는 데 실패했습니다.</p>;
   }
 
