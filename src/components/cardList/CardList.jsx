@@ -9,8 +9,10 @@ const CardList = async ({ page, cat, tags }) => {
   if (!baseUrl) {
     console.error("Next_PUBLIC_BASE_URL이 설정되지 않았습니다.");
   }
+
+  const tagsParam = Array.isArray(tags) ? tags.join(".") : tags || "";
   const res = await fetch(
-    `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tags || ""}&postPerPage=${POSTS_PER_PAGE}`,
+    `${baseUrl}/api/posts?page=${page}&cat=${cat || ""}&tags=${tagsParam}&postPerPage=${POSTS_PER_PAGE}`,
     {
       next: { revalidate: 60 },
     }
