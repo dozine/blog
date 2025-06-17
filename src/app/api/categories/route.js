@@ -1,11 +1,29 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/utils/connect";
-// GET API 함수 - 모든 카테고리 조회
+
+const uncategorizedCategory = async () => {
+  const uncategorized = await prisma.category.findUnique({
+    where: { slug: "uncategorized" },
+  });
+  if (!uncategorized) {
+    return await prisma.category.create({
+      data: {
+        slug: "uncategorized",
+        title: "미분류",
+        img: null,
+      },
+    });
+  }
+  return uncategorized;
+};
+
+// GET API 함수
 export const GET = async () => {
   try {
+    await uncategorizedCategory();
     const categories = await prisma.category.findMany({
       orderBy: {
-        title: "asc", // 카테고리 이름 알파벳 순으로 정렬
+        title: "asc",
       },
     });
 
@@ -16,7 +34,7 @@ export const GET = async () => {
   }
 };
 
-// POST API 함수 - 새 카테고리 생성
+// POST API 함수
 export const POST = async (req) => {
   try {
     const body = await req.json();
@@ -29,24 +47,6 @@ export const POST = async (req) => {
       });
     }
 
-    // slug가 uncategorized인 경우 이미 존재하는지 확인
-    if (slug === "uncategorized") {
-      const existingCategory = await prisma.category.findUnique({
-        where: { slug: "uncategorized" },
-      });
-
-      if (existingCategory) {
-        return NextResponse.json(
-          {
-            message: "미분류 카테고리가 이미 존재합니다.",
-            category: existingCategory,
-          },
-          { status: 200 }
-        );
-      }
-    }
-
-    // 슬러그 중복 확인
     const existingCategory = await prisma.category.findUnique({
       where: { slug },
     });
@@ -97,7 +97,6 @@ export const DELETE = async (req) => {
       });
     }
 
-    // Uncategorized 카테고리 삭제 방지
     if (categoryToDelete.slug === "uncategorized") {
       return new NextResponse("'미분류' 카테고리는 삭제할 수 없습니다.", {
         status: 400,
@@ -105,27 +104,12 @@ export const DELETE = async (req) => {
     }
 
     const deleted = await prisma.$transaction(async (tx) => {
-      // 1. Uncategorized 카테고리 확인 또는 생성
-      let uncategorized = await tx.category.findUnique({
-        where: { slug: "uncategorized" },
-      });
+      const uncategorized = await uncategorizedCategory();
 
-      if (!uncategorized) {
-        uncategorized = await tx.category.create({
-          data: {
-            slug: "uncategorized",
-            title: "미분류",
-          },
-        });
-      }
-
-      // 2. 삭제할 카테고리를 참조하는 모든 포스트의 카테고리를 Uncategorized로 변경
       await tx.post.updateMany({
         where: { catSlug: categoryToDelete.slug },
         data: { catSlug: uncategorized.slug },
       });
-
-      // 3. 카테고리 삭제
       return await tx.category.delete({
         where: { id },
       });
