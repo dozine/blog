@@ -27,27 +27,6 @@ const CategoryListClient = ({ initialCategories }) => {
         throw new Error("카테고리를 불러오는데 실패했습니다");
       }
       const data = await res.json();
-
-      // Uncategorized 카테고리 로직은 그대로 유지
-      let hasUncategorized = data.some((cat) => cat.slug === "uncategorized");
-
-      if (!hasUncategorized && session?.status === "authenticated") {
-        await fetch("/api/categories", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            slug: "uncategorized",
-            title: "미분류",
-            img: null,
-          }),
-        });
-        const refreshRes = await fetch("/api/categories");
-        if (refreshRes.ok) {
-          const refreshData = await refreshRes.json();
-          setCategories(refreshData);
-          return;
-        }
-      }
       setCategories(data);
     } catch (err) {
       console.error("카테고리 로딩 오류:", err);
