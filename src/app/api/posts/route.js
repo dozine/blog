@@ -13,12 +13,12 @@ export const GET = async (req) => {
   const page = pageParam ? parseInt(pageParam, 10) : 1;
   const skip = Math.max(0, POST_PER_PAGE * (page - 1));
 
-  const selectedTags = tagsParam ? tagsParam.split(".") : [];
-  const where = {
+  const selectedTags = tagsParam ? tagsParam.split(".").filter((tag) => tag !== "") : [];
+  let where = {
     isPublished: true,
     ...(cat && { catSlug: cat }),
     ...(selectedTags.length > 0 && {
-      OR: selectedTags.map((tagName) => ({
+      AND: selectedTags.map((tagName) => ({
         tags: {
           some: {
             tag: {
@@ -34,7 +34,13 @@ export const GET = async (req) => {
     if (session.user.email === process.env.MYEMAIL) {
       delete where.isPublished; // 관리자는 모든 글을 볼 수 있도록
     } else {
-      where.OR = [{ isPublished: true }, { userEmail: session.user.email }]; // 본인 글 또는 공개 글
+      const baseWhere = { ...where };
+      delete baseWhere.isPublished;
+
+      where = {
+        ...baseWhere,
+        OR: [{ isPublished: true }, { userEmail: session.user.email }],
+      };
     }
   }
 
@@ -63,7 +69,7 @@ export const GET = async (req) => {
     });
   } catch (err) {
     console.log(err);
-    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }, { status: 500 }));
+    return new NextResponse(JSON.stringify({ message: "Something went wrong!" }), { status: 500 });
   }
 };
 
