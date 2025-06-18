@@ -18,9 +18,7 @@ async function getPostData(slug) {
     });
 
     if (!res.ok) {
-      console.error(
-        `Error fetching post data: ${res.status} ${res.statusText}`
-      );
+      console.error(`Error fetching post data: ${res.status} ${res.statusText}`);
       return null;
     }
 
@@ -49,9 +47,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: data.title,
-    description: data.desc
-      ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "")
-      : "",
+    description: data.desc ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "") : "",
   };
 }
 
