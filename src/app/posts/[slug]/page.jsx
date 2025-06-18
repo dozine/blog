@@ -2,7 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const SinglePageClient = dynamic(() => import("./SinglePageClient"), {
+const SinglePageClient = dynamic(() => import("./singlePageClient"), {
   loading: () => <p>로딩 중...</p>,
 });
 
@@ -18,9 +18,7 @@ async function getPostData(slug) {
     });
 
     if (!res.ok) {
-      console.error(
-        `Error fetching post data: ${res.status} ${res.statusText}`
-      );
+      console.error(`Error fetching post data: ${res.status} ${res.statusText}`);
       return null;
     }
 
@@ -49,9 +47,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: data.title,
-    description: data.desc
-      ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "")
-      : "",
+    description: data.desc ? data.desc.substring(0, 160).replace(/<[^>]*>/g, "") : "",
   };
 }
 
