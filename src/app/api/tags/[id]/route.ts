@@ -1,11 +1,10 @@
 import prisma from "@/app/utils/connect";
-import { Params } from "@/types";
 import { TagWithPosts } from "@/types/tag";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: Params) {
-  const { id } = params;
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   if (!id || id === "undefined") {
     return NextResponse.json({ message: "유효하지 않은 태그 ID입니다." }, { status: 400 });
   }
@@ -33,8 +32,8 @@ export async function GET(req: NextRequest, { params }: Params) {
 }
 
 // DELETE: 태그 삭제
-export async function DELETE(res: NextRequest, { params }: Params) {
-  const { id } = params;
+export async function DELETE(res: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   if (!id || id === "undefined") {
     return NextResponse.json({ message: "유효하지 않은 태그 ID입니다." }, { status: 400 });
   }
