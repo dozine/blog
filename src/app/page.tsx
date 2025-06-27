@@ -8,7 +8,7 @@ const Featured = dynamic(() => import("@/components/featured/Featured"), {
   loading: () => <p>Loading featured posts...</p>,
 });
 
-export default async function Home({ searchParams }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const params = await searchParams;
   const page = parseInt((params.page as string) || "1", 10);
   return (
