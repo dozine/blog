@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/utils/connect";
+import { Category } from "@prisma/client";
+import { CreateCategoryBody } from "@/types";
 
-const uncategorizedCategory = async () => {
-  const uncategorized = await prisma.category.findUnique({
+const uncategorizedCategory = async (): Promise<Category> => {
+  const uncategorized: Category | null = await prisma.category.findUnique({
     where: { slug: "uncategorized" },
   });
   if (!uncategorized) {
@@ -21,23 +23,26 @@ const uncategorizedCategory = async () => {
 export const GET = async () => {
   try {
     await uncategorizedCategory();
-    const categories = await prisma.category.findMany({
+    const categories: Category[] = await prisma.category.findMany({
       orderBy: {
         title: "asc",
       },
     });
 
     return NextResponse.json(categories, { status: 200 });
-  } catch (err) {
+  } catch (err: any) {
     console.error("카테고리 조회 오류:", err);
-    return new NextResponse("카테고리 조회 중 오류 발생", { status: 500 });
+    return new NextResponse(
+      `카테고리 조회 중 오류 발생 : ${err.message || "알수없는 오류"}`,
+      { status: 500 }
+    );
   }
 };
 
 // POST API 함수
-export const POST = async (req) => {
+export const POST = async (req: NextRequest) => {
   try {
-    const body = await req.json();
+    const body: CreateCategoryBody = await req.json();
     const { slug, title, img } = body;
 
     // 필수 필드 확인
@@ -47,7 +52,7 @@ export const POST = async (req) => {
       });
     }
 
-    const existingCategory = await prisma.category.findUnique({
+    const existingCategory: Category | null = await prisma.category.findUnique({
       where: { slug },
     });
 
@@ -56,11 +61,11 @@ export const POST = async (req) => {
     }
 
     // 새 카테고리 생성
-    const newCategory = await prisma.category.create({
+    const newCategory: Category = await prisma.category.create({
       data: {
         slug,
         title,
-        img,
+        img: img || null,
       },
     });
 
@@ -68,7 +73,7 @@ export const POST = async (req) => {
       { message: "카테고리 생성 완료", category: newCategory },
       { status: 201 }
     );
-  } catch (err) {
+  } catch (err: any) {
     console.error("카테고리 생성 오류:", err);
     return new NextResponse("카테고리 생성 중 오류 발생: " + err.message, {
       status: 500,
@@ -77,17 +82,17 @@ export const POST = async (req) => {
 };
 
 // DELETE API 함수 - 카테고리 삭제 (기존 코드에 Uncategorized 체크 추가)
-export const DELETE = async (req) => {
+export const DELETE = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    const id: string | null = searchParams.get("id");
 
     if (!id) {
       return new NextResponse("카테고리 id가 없습니다.", { status: 400 });
     }
 
     // 먼저 카테고리 정보 조회
-    const categoryToDelete = await prisma.category.findUnique({
+    const categoryToDelete: Category | null = await prisma.category.findUnique({
       where: { id },
     });
 
@@ -103,8 +108,8 @@ export const DELETE = async (req) => {
       });
     }
 
-    const deleted = await prisma.$transaction(async (tx) => {
-      const uncategorized = await uncategorizedCategory();
+    const deleted: Category = await prisma.$transaction(async (tx) => {
+      const uncategorized: Category = await uncategorizedCategory();
 
       await tx.post.updateMany({
         where: { catSlug: categoryToDelete.slug },
@@ -115,8 +120,11 @@ export const DELETE = async (req) => {
       });
     });
 
-    return NextResponse.json({ message: "카테고리 삭제 완료", deleted }, { status: 200 });
-  } catch (err) {
+    return NextResponse.json(
+      { message: "카테고리 삭제 완료", deleted },
+      { status: 200 }
+    );
+  } catch (err: any) {
     console.error("카테고리 삭제 오류:", err);
     return new NextResponse("카테고리 삭제 중 오류 발생: " + err.message, {
       status: 500,
