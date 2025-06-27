@@ -1,6 +1,6 @@
 module.exports = {
   testEnvironment: "jsdom",
-  setupFilesAfterEnv: ["<rootDir>/src/setupTests.js"],
+  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
@@ -12,6 +12,13 @@ module.exports = {
   },
   moduleDirectories: ["node_modules", "<rootDir>"],
   testPathIgnorePatterns: ["/node_modules/", "/build/"],
-  collectCoverageFrom: ["src/**/*.{js,jsx}", "!src/index.js", "!src/reportWebVitals.js"],
-  testMatch: ["<rootDir>/src/**/*.test.{js,jsx}", "<rootDir>/src/**/*.spec.{js,jsx}"],
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx}",
+    "!src/index.js",
+    "!src/reportWebVitals.js",
+  ],
+  testMatch: [
+    "<rootDir>/src/**/*.test.{js,jsx}",
+    "<rootDir>/src/**/*.spec.{js,jsx}",
+  ],
 };
