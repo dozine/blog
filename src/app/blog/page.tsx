@@ -2,8 +2,13 @@ import styles from "@/app/blog/blogPage.module.css";
 import CardList from "@/components/cardList/CardList";
 import CategoryList from "@/components/categoryList/CategoryList";
 import Menu from "@/components/menu/Menu";
+import { BlogPageSearchParams } from "@/types";
 
-const BlogPage = async ({ searchParams }) => {
+const BlogPage = async ({
+  searchParams,
+}: {
+  searchParams: BlogPageSearchParams;
+}) => {
   const params = await searchParams;
   const page = Number(params.page || "1");
   const cat = params.cat || "";

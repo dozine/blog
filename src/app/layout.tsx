@@ -1,4 +1,9 @@
-import { Geist, Geist_Mono, Noto_Sans_KR, Nanum_Gothic } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Noto_Sans_KR,
+  Nanum_Gothic,
+} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -7,6 +12,7 @@ import ThemeProvider from "@/providers/ThemeProvider";
 import AuthProvider from "@/providers/AuthProvider";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
+import { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,12 +40,16 @@ const nanumGothic = Nanum_Gothic({
   display: "swap",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Blog App",
   description: "The best blog app!",
 };
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <head>
@@ -47,7 +57,11 @@ export default function RootLayout({ children }) {
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
 
@@ -74,10 +88,10 @@ export default function RootLayout({ children }) {
         <Analytics />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4QDHKQH1M8"
-          strategy="lazyOnLoad"
+          strategy="lazyOnload"
         />
 
-        <Script id="google-analytics" strategy="lazyOnLoad">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

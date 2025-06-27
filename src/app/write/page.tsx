@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import styles from "./writePage.module.css";
 import { useEffect, useRef, useState } from "react";
 import "react-quill-new/dist/quill.bubble.css";
@@ -8,16 +7,19 @@ import "react-quill-new/dist/quill.snow.css";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import editorModules from "../utils/editor";
-import dynamic from "next/dynamic";
 import PostSettingModal from "@/components/postSettingModal/PostSettingModal";
 import ImageUploader from "@/components/imageUploader/ImageUploader";
-
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import { Category, Tag } from "@prisma/client";
+import { TagWithPostCount } from "@/types/tag";
+import { PostWithFormattedTags, UpdatePostBody } from "@/types";
+import type { default as ReactQuillType } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 
 const registerImageResize = async () => {
   if (typeof window !== "undefined") {
     const Quill = (await import("react-quill-new")).Quill;
-    const ImageResize = (await import("quill-image-resize-module-react")).default;
+    const ImageResize = (await import("quill-image-resize-module-react"))
+      .default;
     Quill.register("modules/imageResize", ImageResize);
   }
 };
@@ -27,26 +29,26 @@ const WritePage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isEditing = searchParams.get("edit") === "true";
-  const editSlug = searchParams.get("slug");
+  const isEditing: boolean = searchParams.get("edit") === "true";
+  const editSlug: string = searchParams.get("slug");
 
-  const [media, setMedia] = useState("");
-  const [value, setValue] = useState("");
-  const [title, setTitle] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [media, setMedia] = useState<string | string[] | null>("");
+  const [value, setValue] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // 모달과 관련된 상태
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   // 설정값들
-  const [catSlug, setCatSlug] = useState("");
-  const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState([]);
-  const [availableTags, setAvailableTags] = useState([]);
-  const [isPublished, setIsPublished] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [catSlug, setCatSlug] = useState<string>("");
+  const [tagInput, setTagInput] = useState<string>("");
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [availableTags, setAvailableTags] = useState<TagWithPostCount[]>([]);
+  const [isPublished, setIsPublished] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  const quillRef = useRef(null);
+  const quillRef = useRef<ReactQuillType | null>(null);
 
   useEffect(() => {
     registerImageResize();
@@ -60,7 +62,7 @@ const WritePage = () => {
           const res = await fetch(`/api/posts/${editSlug}`);
           if (!res.ok) throw new Error("게시글을 불러올 수 없습니다.");
 
-          const post = await res.json();
+          const post: PostWithFormattedTags = await res.json();
           setTitle(post.title);
           setValue(post.desc);
           setMedia(post.img || "");
@@ -88,9 +90,10 @@ const WritePage = () => {
     const getCategories = async () => {
       try {
         const res = await fetch("/api/categories");
-        const data = await res.json();
+        if (!res.ok) throw new Error("카테고리를 불러올 수 없습니다.");
+        const data: Category[] = await res.json();
         setCategories(data);
-      } catch (err) {
+      } catch (err: any) {
         console.error("카테고리 가져오기 실패:", err);
       }
     };
@@ -104,9 +107,9 @@ const WritePage = () => {
         const res = await fetch("/api/tags");
         if (!res.ok) throw new Error("태그를 불러올 수 없습니다.");
 
-        const data = await res.json();
+        const data: TagWithPostCount[] = await res.json();
         setAvailableTags(data);
-      } catch (err) {
+      } catch (err: any) {
         console.error("태그 불러오기 실패:", err);
       }
     };
@@ -114,11 +117,11 @@ const WritePage = () => {
   }, []);
 
   // 이미지 업로드 완료 시 호출되는 함수
-  const handleImageUploaded = (url) => {
-    setMedia(url);
+  const handleImageUploaded = (urls: string[]) => {
+    setMedia(urls);
   };
 
-  const slugify = (str) =>
+  const slugify = (str: string) =>
     str
       .normalize("NFC")
       .trim()
@@ -129,11 +132,11 @@ const WritePage = () => {
 
   // 게시하기 버튼 클릭 시 모달 열기
   const handlePublishClick = () => {
-    if (!title) {
+    if (!title.trim()) {
       alert("제목을 입력해주세요.");
       return;
     }
-    if (!value) {
+    if (!value.trim()) {
       alert("내용을 입력해주세요.");
       return;
     }
@@ -142,25 +145,26 @@ const WritePage = () => {
 
   // 모달에서 최종 게시 버튼 클릭 시
   const handleFinalPublish = async () => {
-    const finalCatSlug = catSlug || "uncategorized";
-    const tagIds = tags.map((tag) => tag.id);
+    const finalCatSlug: string = catSlug || "uncategorized";
+    const tagIds: string[] = tags.map((tag) => tag.id);
 
     try {
       if (isEditing) {
         // 수정 API 호출
+        const updateBody: UpdatePostBody = {
+          title,
+          desc: value,
+          img: media,
+          catSlug: finalCatSlug,
+          tags: tagIds,
+          isPublished,
+        };
         const res = await fetch(`/api/posts/${editSlug}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            title,
-            desc: value,
-            img: media,
-            catSlug: finalCatSlug,
-            tags: tagIds,
-            isPublished,
-          }),
+          body: JSON.stringify(updateBody),
         });
 
         if (!res.ok) {
@@ -173,20 +177,22 @@ const WritePage = () => {
         router.push(`/posts/${editSlug}`);
       } else {
         // 새 게시글 작성 API 호출
+        const createBody = {
+          title,
+          desc: value,
+          img: Array.isArray(media) ? media : media ? [media] : [],
+          slug: slugify(title),
+          catSlug: finalCatSlug,
+          tags: tagIds,
+          isPublished,
+        };
+
         const res = await fetch("/api/posts", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            title,
-            desc: value,
-            img: Array.isArray(media) ? media : media ? [media] : [],
-            slug: slugify(title),
-            catSlug: finalCatSlug,
-            tags: tagIds,
-            isPublished,
-          }),
+          body: JSON.stringify(createBody),
         });
 
         if (!res.ok) {
@@ -194,13 +200,15 @@ const WritePage = () => {
           throw new Error(errorData.message || "게시글 작성에 실패했습니다.");
         }
 
-        const data = await res.json();
+        const data: { slug: string } = await res.json();
         console.log("slug after submit:", data.slug);
         router.push(`/posts/${data.slug}`);
       }
     } catch (err) {
       console.error("Error submitting post:", err);
       alert(err.message);
+    } finally {
+      setShowSettingsModal(false);
     }
   };
 
@@ -227,11 +235,14 @@ const WritePage = () => {
       {/* 에디터 영역 */}
       <div className={styles.editor}>
         {/* 이미지 업로더 컴포넌트 */}
-        <ImageUploader onImageUploaded={handleImageUploaded} quillRef={quillRef} />
+        <ImageUploader
+          onImageUploaded={handleImageUploaded}
+          quillRef={quillRef}
+        />
 
         {/* Quill 에디터 */}
         <ReactQuill
-          ref={quillRef}
+          ref={quillRef as any}
           className={styles.textArea}
           theme="bubble"
           value={value}

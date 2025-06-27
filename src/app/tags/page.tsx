@@ -1,14 +1,21 @@
 import styles from "./tagsPage.module.css";
 import CardList from "@/components/cardList/CardList";
 import TagsPageClient from "./tagsPageClient";
+import { TagsPageSearchParams, TagWithPostCount } from "@/types/tag";
+import { Tag } from "@prisma/client";
 
-const TagsPage = async ({ searchParams }) => {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const rawTags = params.tags || "";
-  const tags = rawTags ? rawTags.split(".").filter((tag) => tag !== "") : [];
+const TagsPage = async ({
+  searchParams,
+}: {
+  searchParams: TagsPageSearchParams;
+}) => {
+  const page: number = Number(searchParams.page) || 1;
+  const rawTags: string = searchParams.tags || "";
+  const tags: string[] = rawTags
+    ? rawTags.split(".").filter((tag) => tag !== "")
+    : [];
 
-  let allTags = [];
+  let allTags: TagWithPostCount[] = [];
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     if (baseUrl) {
@@ -16,11 +23,13 @@ const TagsPage = async ({ searchParams }) => {
         cache: "no-store",
       });
       if (res.ok) {
-        const data = await res.json();
-        allTags = Array.from(new Map(data.map((tag) => [tag.name, tag])).values());
+        const data: TagWithPostCount[] = await res.json();
+        allTags = Array.from(
+          new Map(data.map((tag) => [tag.name, tag])).values()
+        );
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("태그 데이터 가져오기 실패:", error);
   }
 
