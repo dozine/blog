@@ -3,10 +3,12 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import prisma from "./connect";
 import { getServerSession } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
+import type { Session, User } from "next-auth";
 
 const ADMIN_EMAIL = process.env.MYEMAIL;
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   // javascript와 typescript연결 방식이 다름 .
   providers: [
@@ -20,14 +22,14 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user }: { user: User }) {
       if (user?.email === ADMIN_EMAIL) {
         return true; // 로그인 허용
       } else {
         return false; // 로그인 거부
       }
     },
-    async session({ session }) {
+    async session({ session }: { session: Session }) {
       if (session?.user?.email === ADMIN_EMAIL) {
         return session;
       } else {
