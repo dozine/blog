@@ -16,7 +16,7 @@ const compatConfig = [...compat.extends("next/core-web-vitals")];
 const eslintConfig = [
   ...compatConfig,
   {
-    files: ["**/*.{js,jsx,mjs,cjs}"],
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
     ignores: ["node_modules/**", ".next/**", "out/**", "public/**", "dist/**"],
     plugins: {
       prettier: prettierPlugin,
