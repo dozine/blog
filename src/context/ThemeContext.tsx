@@ -23,9 +23,7 @@ interface ThemeContextProviderProps {
   children: React.ReactNode;
 }
 
-export const ThemeContextProvider = ({
-  children,
-}: ThemeContextProviderProps) => {
+export const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
   const [theme, setTheme] = useState(() => {
     return getFromLocalStorage();
   });
@@ -38,9 +36,5 @@ export const ThemeContextProvider = ({
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
 };

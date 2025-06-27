@@ -26,9 +26,7 @@ const Card = ({ item, priority = false, index = 0 }: CardProps) => {
             {(() => {
               if (!item.desc) return "";
               const descText = item.desc.replace(/<[^>]+>/g, "");
-              return descText.length > 60
-                ? descText.substring(0, 60) + "..."
-                : descText;
+              return descText.length > 60 ? descText.substring(0, 60) + "..." : descText;
             })()}
           </p>
 
@@ -42,26 +40,24 @@ const Card = ({ item, priority = false, index = 0 }: CardProps) => {
             </div>
           )}
         </div>
-        {Array.isArray(item.img) &&
-          item.img.length > 0 &&
-          item.img[0].trim() !== "" && (
-            <div className={styles.imageContainer}>
-              <div className={styles.image}>
-                <Image
-                  src={item.img[0]}
-                  alt={item.title || "포스트 이미지"}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  priority={shouldPrioritize}
-                  loading={shouldPrioritize ? "eager" : "lazy"}
-                  sizes="(max-width:480px) 100vw, (max-width: 768px) 50vw, 280px"
-                  quality={80}
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                />
-              </div>
+        {Array.isArray(item.img) && item.img.length > 0 && item.img[0].trim() !== "" && (
+          <div className={styles.imageContainer}>
+            <div className={styles.image}>
+              <Image
+                src={item.img[0]}
+                alt={item.title || "포스트 이미지"}
+                fill
+                style={{ objectFit: "cover" }}
+                priority={shouldPrioritize}
+                loading={shouldPrioritize ? "eager" : "lazy"}
+                sizes="(max-width:480px) 100vw, (max-width: 768px) 50vw, 280px"
+                quality={80}
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+              />
             </div>
-          )}
+          </div>
+        )}
       </div>
     </Link>
   );

@@ -13,16 +13,12 @@ export interface CategoryListClientProps {
 export interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (
-    categoryData: string
-  ) => Promise<{ success: boolean; error?: string }>;
+  onAdd: (categoryData: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export interface DeleteCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDelete: (
-    categoryId: string
-  ) => Promise<{ success: boolean; error?: string }>;
+  onDelete: (categoryId: string) => Promise<{ success: boolean; error?: string }>;
   categories: Category[];
 }

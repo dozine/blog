@@ -118,9 +118,7 @@ const PostSettingModal = ({
           <select
             className={styles.select}
             value={catSlug}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              setCatSlug(e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => setCatSlug(e.target.value)}
           >
             <option value="">카테고리 선택</option>
             {categories.map((cat: Category) => (
@@ -138,9 +136,7 @@ const PostSettingModal = ({
               <input
                 ref={tagInputRef}
                 type="text"
-                placeholder={
-                  tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"
-                }
+                placeholder={tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"}
                 className={styles.tagInput}
                 value={tagInput}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -170,11 +166,7 @@ const PostSettingModal = ({
             {showTagSuggestions && filteredTags.length > 0 && (
               <div className={styles.tagSuggestions}>
                 {filteredTags.slice(0, 5).map((tag: TagWithCount) => (
-                  <div
-                    key={tag.id}
-                    className={styles.tagSuggestion}
-                    onClick={() => addTag(tag)}
-                  >
+                  <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
                     {tag.name}
                   </div>
                 ))}
@@ -186,10 +178,7 @@ const PostSettingModal = ({
               {tags.map((tag: Tag) => (
                 <span key={tag.id} className={styles.tagBadge}>
                   {tag.name}
-                  <button
-                    className={styles.removeTagButton}
-                    onClick={() => removeTag(tag.id)}
-                  >
+                  <button className={styles.removeTagButton} onClick={() => removeTag(tag.id)}>
                     ×
                   </button>
                 </span>
@@ -205,15 +194,11 @@ const PostSettingModal = ({
               type="checkbox"
               aria-label="공개 설정"
               checked={isPublished}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setIsPublished(e.target.checked)
-              }
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setIsPublished(e.target.checked)}
               className={styles.toggleInput}
             />
             <span className={styles.toggleSlider}></span>
-            <span className={styles.toggleText}>
-              {isPublished ? "공개됨" : "비공개"}
-            </span>
+            <span className={styles.toggleText}>{isPublished ? "공개됨" : "비공개"}</span>
           </label>
         </div>
 

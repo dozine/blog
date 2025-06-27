@@ -19,9 +19,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadError, setUploadError] = useState<string>("");
 
-  const createMultipleSizes = async (
-    originalFile: File
-  ): Promise<SizedImageResult[]> => {
+  const createMultipleSizes = async (originalFile: File): Promise<SizedImageResult[]> => {
     const sizes = [
       { name: "card", maxSize: 400, quality: 0.7 },
       { name: "medium", maxSize: 800, quality: 0.8 },
@@ -84,18 +82,14 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
           ctx.drawImage(img, 0, 0, width, height);
 
           // WebP 포맷으로 변환 (지원되는 경우)
-          const outputFormat = canvas
-            .toDataURL("image/webp")
-            .startsWith("data:image/webp")
+          const outputFormat = canvas.toDataURL("image/webp").startsWith("data:image/webp")
             ? "image/webp"
             : "image/jpeg";
 
           canvas.toBlob(
             (blob) => {
               if (!blob) {
-                reject(
-                  new Error("이미지를 Blob으로 변환하는 데 실패했습니다.")
-                );
+                reject(new Error("이미지를 Blob으로 변환하는 데 실패했습니다."));
                 return;
               }
               const fileName =
@@ -107,8 +101,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
             quality
           );
         };
-        img.onerror = () =>
-          reject(new Error("이미지 로드 중 오류가 발생했습니다."));
+        img.onerror = () => reject(new Error("이미지 로드 중 오류가 발생했습니다."));
         img.src = e.target.result as string;
       };
       reader.onerror = () => {
@@ -134,12 +127,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
           return;
         }
 
-        const validTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
+        const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
         if (!validTypes.includes(file.type)) {
           setUploadError("지원되는 이미지 형식은 JPEG, PNG, GIF, WEBP입니다.");
           setFile(null);
@@ -164,24 +152,18 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
               (snapshot: UploadTaskSnapshot) => {
                 const progress =
                   (i / imageSizes.length +
-                    snapshot.bytesTransferred /
-                      snapshot.totalBytes /
-                      imageSizes.length) *
+                    snapshot.bytesTransferred / snapshot.totalBytes / imageSizes.length) *
                   100;
                 setUploadProgress(progress);
               },
               (error: Error) => {
                 console.error("업로드 오류:", error);
-                setUploadError(
-                  "이미지 업로드 중 오류가 발생했습니다: " + error.message
-                );
+                setUploadError("이미지 업로드 중 오류가 발생했습니다: " + error.message);
                 reject(error);
               },
               async () => {
                 try {
-                  const downloadURL: string = await getDownloadURL(
-                    uploadTask.snapshot.ref
-                  );
+                  const downloadURL: string = await getDownloadURL(uploadTask.snapshot.ref);
                   uploadedUrls[sizeName] = downloadURL;
                   resolve();
                 } catch (err: any) {
@@ -193,11 +175,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
           });
         }
 
-        const urlArray: string[] = [
-          uploadedUrls.card,
-          uploadedUrls.medium,
-          uploadedUrls.large,
-        ];
+        const urlArray: string[] = [uploadedUrls.card, uploadedUrls.medium, uploadedUrls.large];
 
         onImageUploaded(urlArray);
 
@@ -275,10 +253,7 @@ const ImageUploader = ({ onImageUploaded, quillRef }: ImageUploaderProps) => {
       {file && uploadProgress < 100 && uploadProgress > 0 && (
         <div className={styles.uploadStatus}>
           <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${uploadProgress}%` }}
-            ></div>
+            <div className={styles.progressFill} style={{ width: `${uploadProgress}%` }}></div>
           </div>
           <span>{uploadProgress.toFixed(0)}% 업로드됨</span>
         </div>

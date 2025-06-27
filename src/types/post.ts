@@ -55,10 +55,7 @@ export type UpdatedPostWithRelations = Prisma.PostGetPayload<{
   include: { user: true; tags: { include: { tag: true } } };
 }>;
 
-export type FormattedPostResponse = Omit<
-  UpdatedPostWithRelations,
-  "tags" | "user"
-> & {
+export type FormattedPostResponse = Omit<UpdatedPostWithRelations, "tags" | "user"> & {
   tags: Tag[];
   user: Pick<User, "id" | "email" | "name" | "image">;
 };

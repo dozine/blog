@@ -4,16 +4,10 @@ import TagsPageClient from "./tagsPageClient";
 import { TagsPageSearchParams, TagWithPostCount } from "@/types/tag";
 import { Tag } from "@prisma/client";
 
-const TagsPage = async ({
-  searchParams,
-}: {
-  searchParams: TagsPageSearchParams;
-}) => {
+const TagsPage = async ({ searchParams }: { searchParams: TagsPageSearchParams }) => {
   const page: number = Number(searchParams.page) || 1;
   const rawTags: string = searchParams.tags || "";
-  const tags: string[] = rawTags
-    ? rawTags.split(".").filter((tag) => tag !== "")
-    : [];
+  const tags: string[] = rawTags ? rawTags.split(".").filter((tag) => tag !== "") : [];
 
   let allTags: TagWithPostCount[] = [];
   try {
@@ -24,9 +18,7 @@ const TagsPage = async ({
       });
       if (res.ok) {
         const data: TagWithPostCount[] = await res.json();
-        allTags = Array.from(
-          new Map(data.map((tag) => [tag.name, tag])).values()
-        );
+        allTags = Array.from(new Map(data.map((tag) => [tag.name, tag])).values());
       }
     }
   } catch (error: any) {

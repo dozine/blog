@@ -1,9 +1,4 @@
-import {
-  Geist,
-  Geist_Mono,
-  Noto_Sans_KR,
-  Nanum_Gothic,
-} from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_KR, Nanum_Gothic } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -57,11 +52,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
 

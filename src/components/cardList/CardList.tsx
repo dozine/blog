@@ -29,12 +29,7 @@ const CardList = async ({ page, cat, tags }: CardListProps) => {
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error(
-      "Failed to fetch posts on server:",
-      res.status,
-      res.statusText,
-      errorText
-    );
+    console.error("Failed to fetch posts on server:", res.status, res.statusText, errorText);
     return <p>포스트를 불러오는 데 실패했습니다.</p>;
   }
 

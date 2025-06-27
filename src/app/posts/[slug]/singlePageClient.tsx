@@ -54,11 +54,7 @@ const SinglePageClient = ({ data, slug }: SinglePageClientProps) => {
                 <div className={styles.userImageContainer}>
                   <Image
                     src={data.user.image}
-                    alt={
-                      data.user.name
-                        ? `${data.user.name}의 아바타`
-                        : "사용자 아바타"
-                    }
+                    alt={data.user.name ? `${data.user.name}의 아바타` : "사용자 아바타"}
                     fill
                     className={styles.avatar}
                     sizes="(max-width: 768px) 40px, 50px"
@@ -97,10 +93,7 @@ const SinglePageClient = ({ data, slug }: SinglePageClientProps) => {
                       </button>
                       {menuOpen && (
                         <div className={styles.menu}>
-                          <button
-                            className={styles.menuItem}
-                            onClick={handleEdit}
-                          >
+                          <button className={styles.menuItem} onClick={handleEdit}>
                             수정하기
                           </button>
                           <button
@@ -138,10 +131,7 @@ const SinglePageClient = ({ data, slug }: SinglePageClientProps) => {
       {/* 포스트 콘텐츠 */}
       <div className={styles.content}>
         <div className={styles.post}>
-          <div
-            className="ql-editor"
-            dangerouslySetInnerHTML={{ __html: data.desc }}
-          />
+          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data.desc }} />
         </div>
       </div>
 

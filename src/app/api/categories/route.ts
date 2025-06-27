@@ -32,10 +32,9 @@ export const GET = async () => {
     return NextResponse.json(categories, { status: 200 });
   } catch (err: any) {
     console.error("카테고리 조회 오류:", err);
-    return new NextResponse(
-      `카테고리 조회 중 오류 발생 : ${err.message || "알수없는 오류"}`,
-      { status: 500 }
-    );
+    return new NextResponse(`카테고리 조회 중 오류 발생 : ${err.message || "알수없는 오류"}`, {
+      status: 500,
+    });
   }
 };
 
@@ -120,10 +119,7 @@ export const DELETE = async (req: NextRequest) => {
       });
     });
 
-    return NextResponse.json(
-      { message: "카테고리 삭제 완료", deleted },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "카테고리 삭제 완료", deleted }, { status: 200 });
   } catch (err: any) {
     console.error("카테고리 삭제 오류:", err);
     return new NextResponse("카테고리 삭제 중 오류 발생: " + err.message, {

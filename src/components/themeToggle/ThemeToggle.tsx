@@ -13,9 +13,7 @@ const ThemeToggle = () => {
     <button
       className={styles.button}
       onClick={toggle}
-      aria-label={
-        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-      }
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       style={{
         borderColor: claudeOrange,
         color: theme === "dark" ? claudeOrange : "#333",
