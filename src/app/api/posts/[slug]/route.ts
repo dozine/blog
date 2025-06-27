@@ -4,14 +4,8 @@ import { PostWithFormattedTags, UpdatePostBody } from "@/types";
 import { Post, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteParams {
-  params: {
-    slug: string;
-  };
-}
-
 //GET SINGLE POST
-export const GET = async (req: NextRequest, { params }: RouteParams) => {
+export const GET = async (req: NextRequest, { params }: { params: { slug: string } }) => {
   const { slug } = params;
   const session = await getAuthSession();
   if (!slug || slug === "undefined") {
@@ -65,7 +59,7 @@ export const GET = async (req: NextRequest, { params }: RouteParams) => {
 };
 
 //DELETE POST
-export const DELETE = async (req: NextRequest, { params }: RouteParams) => {
+export const DELETE = async (req: NextRequest, { params }: { params: { slug: string } }) => {
   const session = await getAuthSession();
   if (!session?.user?.email) {
     return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
@@ -113,7 +107,7 @@ export const DELETE = async (req: NextRequest, { params }: RouteParams) => {
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: RouteParams) => {
+export const PUT = async (req: NextRequest, { params }: { params: { slug: string } }) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email) {
