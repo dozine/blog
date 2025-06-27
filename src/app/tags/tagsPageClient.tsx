@@ -5,11 +5,7 @@ import styles from "./tagsPage.module.css";
 import { useSearchParams, useRouter } from "next/navigation";
 import { TagsPageClientProp, TagWithPostCount } from "@/types/tag";
 
-const TagsPageClient = ({
-  initialPage,
-  initialTags,
-  allTags,
-}: TagsPageClientProp) => {
+const TagsPageClient = ({ initialPage, initialTags, allTags }: TagsPageClientProp) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [tags, setTags] = useState<TagWithPostCount[]>(allTags);
@@ -22,9 +18,7 @@ const TagsPageClient = ({
 
   const handleTagClick = (tagName: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const currentTags: string[] = params.get("tags")
-      ? params.get("tags").split(".")
-      : [];
+    const currentTags: string[] = params.get("tags") ? params.get("tags").split(".") : [];
 
     if (!currentTags.includes(tagName)) {
       currentTags.push(tagName);

@@ -65,9 +65,7 @@ const CategoryListClient = ({ initialCategories }: CategoryListClientProps) => {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || `카테고리 추가 실패 (${res.status})`
-        );
+        throw new Error(errorData.message || `카테고리 추가 실패 (${res.status})`);
       }
 
       await fetchCategories();
@@ -97,9 +95,7 @@ const CategoryListClient = ({ initialCategories }: CategoryListClientProps) => {
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         console.error("삭제 응답 에러:", res.status, errorData);
-        throw new Error(
-          errorData.message || `카테고리 삭제 실패 (${res.status})`
-        );
+        throw new Error(errorData.message || `카테고리 삭제 실패 (${res.status})`);
       }
 
       await fetchCategories();
@@ -163,20 +159,13 @@ const CategoryListClient = ({ initialCategories }: CategoryListClientProps) => {
       {session?.status === "authenticated" && (
         <div className={styles.menuContainer}>
           <div className={styles.menuWrapper}>
-            <button
-              className={styles.menuButton}
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
+            <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
               카테고리 관리
             </button>
             {menuOpen && (
               <div className={styles.menu}>
-                <button onClick={() => setIsAddModalOpen(true)}>
-                  추가하기
-                </button>
-                <button onClick={() => setIsDeleteModalOpen(true)}>
-                  삭제하기
-                </button>
+                <button onClick={() => setIsAddModalOpen(true)}>추가하기</button>
+                <button onClick={() => setIsDeleteModalOpen(true)}>삭제하기</button>
                 <AddCategoryModal
                   isOpen={isAddModalOpen}
                   onClose={() => setIsAddModalOpen(false)}
@@ -216,10 +205,7 @@ const CategoryListClient = ({ initialCategories }: CategoryListClientProps) => {
           onTouchMove={handleTouchMove}
         >
           <div className={styles.categories}>
-            <Link
-              href="/blog"
-              className={`${styles.category} ${styles.allCategory}`}
-            >
+            <Link href="/blog" className={`${styles.category} ${styles.allCategory}`}>
               <span className={styles.categoryText}>All</span>
             </Link>
             {categories?.map((item: Category) => {

@@ -17,11 +17,7 @@ const CategoryListServer = async () => {
   });
 
   if (!res.ok) {
-    console.error(
-      "Failed to fetch categories on server:",
-      res.status,
-      res.statusText
-    );
+    console.error("Failed to fetch categories on server:", res.status, res.statusText);
     return <p>카테고리를 불러오는 데 실패했습니다.</p>;
   }
 

@@ -3,13 +3,12 @@ import styles from "./homepage.module.css";
 import RecentPosts from "@/components/recentPosts/RecentPosts";
 
 import dynamic from "next/dynamic";
-import { HomeProps } from "@/types/page";
 
 const Featured = dynamic(() => import("@/components/featured/Featured"), {
   loading: () => <p>Loading featured posts...</p>,
 });
 
-export default async function Home({ searchParams }: HomeProps) {
+export default async function Home({ searchParams }) {
   const params = await searchParams;
   const page = parseInt((params.page as string) || "1", 10);
   return (

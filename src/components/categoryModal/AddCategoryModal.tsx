@@ -3,11 +3,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../modal/Modal";
 import { AddCategoryModalProps } from "@/types";
 
-const AddCategoryModal = ({
-  isOpen,
-  onClose,
-  onAdd,
-}: AddCategoryModalProps) => {
+const AddCategoryModal = ({ isOpen, onClose, onAdd }: AddCategoryModalProps) => {
   const [title, setTitle] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -50,9 +46,7 @@ const AddCategoryModal = ({
         type="text"
         placeholder="카테고리 이름"
         value={title}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setTitle(e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
         style={{ width: "100%", padding: "8px", marginBottom: "0.5rem" }}
       />
 

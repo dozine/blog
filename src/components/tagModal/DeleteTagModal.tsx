@@ -1,14 +1,8 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../modal/Modal";
-import { DeleteTagModalProps, TagWithCount } from "@/types/tag";
 
-const DeleteTagModal = ({
-  isOpen,
-  onClose,
-  onDelete,
-  tags,
-}: DeleteTagModalProps) => {
+const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
   const [selectedTagId, setSelectedTagId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -62,7 +56,7 @@ const DeleteTagModal = ({
         disabled={isLoading}
       >
         <option value="">선택해주세요</option>
-        {tags?.map((tag: TagWithCount) => (
+        {tags?.map((tag) => (
           <option key={tag.id} value={tag.id}>
             {tag.name} ({tag._count?.posts ?? 0})
           </option>
