@@ -43,7 +43,7 @@ async function getPostData(slug: string): Promise<FormattedPostResponse | null> 
   }
 }
 
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await getPostData(slug as string);
 
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Params) {
   };
 }
 
-const SinglePage = async ({ params }: Params) => {
+const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
   const data = await getPostData(slug as string);
