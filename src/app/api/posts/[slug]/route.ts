@@ -1,11 +1,11 @@
 import { getAuthSession } from "@/app/utils/auth";
 import prisma from "@/app/utils/connect";
 import { Params, PostWithFormattedTags, UpdatePostBody } from "@/types";
-import { Post, Prisma, Tag, User } from "@prisma/client";
+import { Post, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 //GET SINGLE POST
-export const GET = async (req: NextRequest, { params }: Params) => {
+export const GET = async (req: NextRequest, { params }) => {
   const { slug } = await params;
   const session = await getAuthSession();
   if (!slug || slug === "undefined") {
