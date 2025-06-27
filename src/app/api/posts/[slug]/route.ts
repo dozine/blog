@@ -59,7 +59,7 @@ export const GET = async (req: NextRequest, { params }) => {
 };
 
 //DELETE POST
-export const DELETE = async (req: NextRequest, { params }: Params) => {
+export const DELETE = async (req: NextRequest, { params }) => {
   const session = await getAuthSession();
   if (!session?.user?.email) {
     return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
@@ -107,7 +107,7 @@ export const DELETE = async (req: NextRequest, { params }: Params) => {
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: Params) => {
+export const PUT = async (req: NextRequest, { params }) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email) {
@@ -117,7 +117,7 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
       });
     }
 
-    const { slug } = params;
+    const { slug } = await params;
     if (!slug || slug === "undefined") {
       return new NextResponse(JSON.stringify({ message: "Invalid post slug" }), {
         status: 400,
