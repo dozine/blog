@@ -5,8 +5,8 @@ import { Post, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 //GET SINGLE POST
-export const GET = async (req: NextRequest, { params }: { params: { slug: string } }) => {
-  const { slug } = params;
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
   const session = await getAuthSession();
   if (!slug || slug === "undefined") {
     return new NextResponse(JSON.stringify({ message: "Invalid post slug" }), {
@@ -59,7 +59,10 @@ export const GET = async (req: NextRequest, { params }: { params: { slug: string
 };
 
 //DELETE POST
-export const DELETE = async (req: NextRequest, { params }: { params: { slug: string } }) => {
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) => {
   const session = await getAuthSession();
   if (!session?.user?.email) {
     return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
@@ -67,7 +70,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { slug: str
       headers: { "Content-Type": "application/json" },
     });
   }
-  const { slug } = params;
+  const { slug } = await params;
   try {
     const post: Post | null = await prisma.post.findUnique({
       where: { slug },
@@ -107,7 +110,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { slug: str
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: { params: { slug: string } }) => {
+export const PUT = async (req: NextRequest, { params }: { params: Promise<{ slug: string }> }) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email) {
@@ -117,7 +120,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { slug: string
       });
     }
 
-    const { slug } = params;
+    const { slug } = await params;
     if (!slug || slug === "undefined") {
       return new NextResponse(JSON.stringify({ message: "Invalid post slug" }), {
         status: 400,
