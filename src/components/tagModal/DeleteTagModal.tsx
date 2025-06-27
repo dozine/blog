@@ -1,13 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../modal/Modal";
+import { DeleteTagModalProps, TagWithCount } from "@/types/tag";
 
-const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
-  const [selectedTagId, setSelectedTagId] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+const DeleteTagModal = ({
+  isOpen,
+  onClose,
+  onDelete,
+  tags,
+}: DeleteTagModalProps) => {
+  const [selectedTagId, setSelectedTagId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  // 모달이 닫힐 때 상태 초기화
   useEffect(() => {
     if (!isOpen) {
       setSelectedTagId("");
@@ -15,11 +20,14 @@ const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
     }
   }, [isOpen]);
 
-  const handleDeleteSubmit = async () => {
-    if (!selectedTagId) return;
-
+  const handleDeleteSubmit = async (): Promise<void> => {
+    if (!selectedTagId) {
+      setError("삭제할 태그를 선택해주세요.");
+      return;
+    }
     setError("");
     setIsLoading(true);
+
     try {
       const result = await onDelete(selectedTagId);
       if (result?.success === false) {
@@ -28,8 +36,8 @@ const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
         setSelectedTagId("");
         onClose();
       }
-    } catch (err) {
-      setError("삭제 중 오류가 발생했습니다.");
+    } catch (err: any) {
+      setError(err.message || "삭제 중 오류가 발생했습니다.");
       console.error("태그 삭제 오류:", err);
     } finally {
       setIsLoading(false);
@@ -41,9 +49,9 @@ const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
       <h3>삭제할 태그를 선택해주세요</h3>
       <select
         value={selectedTagId}
-        onChange={(e) => {
+        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
           setSelectedTagId(e.target.value);
-          setError(""); // 새 선택 시 오류 메시지 초기화
+          setError("");
         }}
         style={{
           width: "100%",
@@ -54,8 +62,8 @@ const DeleteTagModal = ({ isOpen, onClose, onDelete, tags }) => {
         disabled={isLoading}
       >
         <option value="">선택해주세요</option>
-        {tags?.map((tag) => (
-          <option key={tag.id || tag._id} value={tag.id || tag._id}>
+        {tags?.map((tag: TagWithCount) => (
+          <option key={tag.id} value={tag.id}>
             {tag.name} ({tag._count?.posts ?? 0})
           </option>
         ))}

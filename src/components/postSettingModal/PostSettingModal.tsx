@@ -1,7 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import styles from "./postSettingModal.module.css";
-
+import { PostSettingModalProps } from "@/types";
+import { TagWithCount } from "@/types/tag";
+import { Category, Tag } from "@prisma/client";
 const PostSettingModal = ({
   isOpen,
   onClose,
@@ -17,14 +19,14 @@ const PostSettingModal = ({
   availableTags,
   setAvailableTags,
   onPublish,
-}) => {
-  const [filteredTags, setFilteredTags] = useState([]);
-  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
-  const tagInputRef = useRef(null);
+}: PostSettingModalProps) => {
+  const [filteredTags, setFilteredTags] = useState<TagWithCount[]>([]);
+  const [showTagSuggestions, setShowTagSuggestions] = useState<boolean>(false);
+  const tagInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen && tagInputRef.current && process.env.NODE_ENV !== "test") {
-      setTimeout(() => tagInputRef.current.focus(), 100);
+      setTimeout(() => tagInputRef.current?.focus(), 100);
     }
   }, [isOpen]);
 
@@ -41,7 +43,7 @@ const PostSettingModal = ({
     }
   }, [tagInput, availableTags, tags]);
 
-  const addTag = (tag) => {
+  const addTag = (tag: TagWithCount): void => {
     if (tags.length >= 5) {
       alert("태그는 최대 5개까지만 추가할 수 있습니다.");
       return;
@@ -60,7 +62,7 @@ const PostSettingModal = ({
   };
 
   // 새 태그 생성 함수
-  const createNewTag = async () => {
+  const createNewTag = async (): Promise<void> => {
     if (!tagInput.trim()) return;
     if (tags.length >= 5) {
       alert("태그는 최대 5개까지만 추가할 수 있습니다.");
@@ -78,7 +80,7 @@ const PostSettingModal = ({
 
       if (!res.ok) {
         const errorData = await res.json();
-        // 이미 존재하는 태그인 경우, 해당 태그를 찾아서 추가
+
         if (res.status === 409) {
           const existingTag = availableTags.find(
             (tag) => tag.name.toLowerCase() === tagInput.trim().toLowerCase()
@@ -91,16 +93,16 @@ const PostSettingModal = ({
         throw new Error(errorData.message || "태그 생성에 실패했습니다.");
       }
 
-      const newTag = await res.json();
+      const newTag: TagWithCount = await res.json();
       addTag(newTag);
       setAvailableTags([...availableTags, newTag]);
-    } catch (err) {
+    } catch (err: any) {
       console.error("태그 생성 실패:", err);
       alert(err.message);
     }
   };
 
-  const removeTag = (tagId) => {
+  const removeTag = (tagId: string): void => {
     setTags(tags.filter((tag) => tag.id !== tagId));
   };
 
@@ -116,10 +118,12 @@ const PostSettingModal = ({
           <select
             className={styles.select}
             value={catSlug}
-            onChange={(e) => setCatSlug(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setCatSlug(e.target.value)
+            }
           >
             <option value="">카테고리 선택</option>
-            {categories.map((cat) => (
+            {categories.map((cat: Category) => (
               <option key={cat.slug} value={cat.slug}>
                 {cat.title}
               </option>
@@ -134,14 +138,16 @@ const PostSettingModal = ({
               <input
                 ref={tagInputRef}
                 type="text"
-                placeholder={tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"}
+                placeholder={
+                  tags.length >= 5 ? "태그 최대 5개" : "태그 입력 (최대 5개)"
+                }
                 className={styles.tagInput}
                 value={tagInput}
-                onChange={(e) => {
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setTagInput(e.target.value);
                   setShowTagSuggestions(true);
                 }}
-                onKeyDown={(e) => {
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     if (filteredTags.length > 0) {
@@ -163,8 +169,12 @@ const PostSettingModal = ({
             {/* 태그 제안 목록 */}
             {showTagSuggestions && filteredTags.length > 0 && (
               <div className={styles.tagSuggestions}>
-                {filteredTags.slice(0, 5).map((tag) => (
-                  <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
+                {filteredTags.slice(0, 5).map((tag: TagWithCount) => (
+                  <div
+                    key={tag.id}
+                    className={styles.tagSuggestion}
+                    onClick={() => addTag(tag)}
+                  >
                     {tag.name}
                   </div>
                 ))}
@@ -173,10 +183,13 @@ const PostSettingModal = ({
 
             {/* 선택된 태그 표시 */}
             <div className={styles.selectedTags}>
-              {tags.map((tag) => (
+              {tags.map((tag: Tag) => (
                 <span key={tag.id} className={styles.tagBadge}>
                   {tag.name}
-                  <button className={styles.removeTagButton} onClick={() => removeTag(tag.id)}>
+                  <button
+                    className={styles.removeTagButton}
+                    onClick={() => removeTag(tag.id)}
+                  >
                     ×
                   </button>
                 </span>
@@ -192,11 +205,15 @@ const PostSettingModal = ({
               type="checkbox"
               aria-label="공개 설정"
               checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setIsPublished(e.target.checked)
+              }
               className={styles.toggleInput}
             />
             <span className={styles.toggleSlider}></span>
-            <span className={styles.toggleText}>{isPublished ? "공개됨" : "비공개"}</span>
+            <span className={styles.toggleText}>
+              {isPublished ? "공개됨" : "비공개"}
+            </span>
           </label>
         </div>
 

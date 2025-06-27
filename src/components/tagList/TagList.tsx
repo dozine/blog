@@ -3,13 +3,21 @@ import { useSession } from "next-auth/react";
 import styles from "./tagList.module.css";
 import { useState } from "react";
 import DeleteTagModal from "../tagModal/DeleteTagModal";
+import { TagListProps, TagWithCount } from "@/types/tag";
 
-const TagList = ({ tags, selectedTags = [], onTagClick, onTagDelete }) => {
+const TagList = ({
+  tags,
+  selectedTags = [],
+  onTagClick,
+  onTagDelete,
+}: TagListProps) => {
   const { data: session, status } = useSession();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
-  const handleDelete = async (tagId) => {
+  const handleDelete = async (
+    tagId: string
+  ): Promise<{ success: boolean; error?: string }> => {
     if (!tagId) return { success: false, error: "태그 ID가 없습니다." };
 
     try {
@@ -30,9 +38,11 @@ const TagList = ({ tags, selectedTags = [], onTagClick, onTagDelete }) => {
       alert("태그가 성공적으로 삭제되었습니다.");
       setIsDeleteModalOpen(false);
       setMenuOpen(false);
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error("태그 삭제 오류:", error);
       alert(`태그 삭제 실패: ${error.message}`);
+      return { success: false, error: error.message || "태그 삭제 실패" };
     }
   };
 
@@ -41,12 +51,17 @@ const TagList = ({ tags, selectedTags = [], onTagClick, onTagDelete }) => {
       {status === "authenticated" && (
         <div className={styles.menuContainer}>
           <div className={styles.menuWrapper}>
-            <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
+            <button
+              className={styles.menuButton}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
               태그 관리
             </button>
             {menuOpen && (
               <div className={styles.menu}>
-                <button onClick={() => setIsDeleteModalOpen(true)}>삭제하기</button>
+                <button onClick={() => setIsDeleteModalOpen(true)}>
+                  삭제하기
+                </button>
               </div>
             )}
           </div>
@@ -55,7 +70,7 @@ const TagList = ({ tags, selectedTags = [], onTagClick, onTagDelete }) => {
 
       <div className={styles.tagGrid}>
         {tags && tags.length > 0 ? (
-          tags.map((tag) => {
+          tags.map((tag: TagWithCount) => {
             const isActive = selectedTags.includes(tag.name);
             return (
               <button

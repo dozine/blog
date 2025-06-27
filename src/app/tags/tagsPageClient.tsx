@@ -3,19 +3,28 @@ import React, { useState } from "react";
 import TagList from "@/components/tagList/TagList";
 import styles from "./tagsPage.module.css";
 import { useSearchParams, useRouter } from "next/navigation";
+import { TagsPageClientProp, TagWithPostCount } from "@/types/tag";
 
-const TagsPageClient = ({ initialPage, initialTags, allTags }) => {
+const TagsPageClient = ({
+  initialPage,
+  initialTags,
+  allTags,
+}: TagsPageClientProp) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [tags, setTags] = useState(allTags);
+  const [tags, setTags] = useState<TagWithPostCount[]>(allTags);
 
-  const page = Number(searchParams.get("page")) || initialPage;
-  const rawTags = searchParams.get("tags");
-  const selectedTags = rawTags ? rawTags.split(".").filter((tag) => tag !== "") : initialTags;
+  const page: number = Number(searchParams.get("page")) || initialPage;
+  const rawTags: string = searchParams.get("tags");
+  const selectedTags: string[] = rawTags
+    ? rawTags.split(".").filter((tag) => tag !== "")
+    : initialTags;
 
-  const handleTagClick = (tagName) => {
+  const handleTagClick = (tagName: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const currentTags = params.get("tags") ? params.get("tags").split(".") : [];
+    const currentTags: string[] = params.get("tags")
+      ? params.get("tags").split(".")
+      : [];
 
     if (!currentTags.includes(tagName)) {
       currentTags.push(tagName);
@@ -32,7 +41,7 @@ const TagsPageClient = ({ initialPage, initialTags, allTags }) => {
     router.push(`/tags?${params.toString()}`);
   };
 
-  const handleTagDelete = (deletedTagId) => {
+  const handleTagDelete = (deletedTagId: string) => {
     setTags((prevTags) => prevTags.filter((tag) => tag.id !== deletedTagId));
   };
 

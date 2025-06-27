@@ -5,9 +5,10 @@ import React from "react";
 import styles from "./featured.module.css";
 import Image from "next/image";
 import Slider from "react-slick";
+import { Featuredost } from "@/types";
 
 const Featured = () => {
-  const featuredPosts = [
+  const featuredPosts: Featuredost[] = [
     {
       id: 1,
       title: "블로그 소개글 ",
@@ -34,10 +35,12 @@ const Featured = () => {
   };
   return (
     <div className={styles.container}>
-      <div className={styles.featuredTitle}>안녕하세요. 블로그 진도장입니다.</div>
+      <div className={styles.featuredTitle}>
+        안녕하세요. 블로그 진도장입니다.
+      </div>
 
       <Slider {...settings}>
-        {featuredPosts.map((post, index) => (
+        {featuredPosts.map((post: Featuredost, index: number) => (
           <div key={post.id} className={styles.slide}>
             <div className={styles.imgContainer}>
               <Image

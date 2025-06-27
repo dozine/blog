@@ -1,24 +1,32 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, MouseEvent, TouchEvent } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import styles from "./categoryList.module.css";
 import AddCategoryModal from "../categoryModal/AddCategoryModal";
 import DeleteCategoryModal from "../categoryModal/DeleteCategoryModal";
+import { CategoryListClientProps } from "@/types";
+import { Category } from "@prisma/client";
 
-const CategoryListClient = ({ initialCategories }) => {
+const CategoryListClient = ({ initialCategories }: CategoryListClientProps) => {
   const session = useSession();
-  const [categories, setCategories] = useState(initialCategories);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const sliderRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [startX, setStartX] = useState<number>(0);
+  const [scrollLeft, setScrollLeft] = useState<number>(0);
+
+  useEffect(() => {
+    if (!initialCategories || initialCategories.length === 0) {
+      fetchCategories();
+    }
+  }, [initialCategories]);
 
   const fetchCategories = async () => {
     try {
@@ -26,24 +34,26 @@ const CategoryListClient = ({ initialCategories }) => {
       if (!res.ok) {
         throw new Error("카테고리를 불러오는데 실패했습니다");
       }
-      const data = await res.json();
+      const data: Category[] = await res.json();
       setCategories(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("카테고리 로딩 오류:", err);
-      setError(err.message);
+      setError(err.message || "카테고리 로딩 중 문제가 발생했습니다");
     }
   };
 
-  const handleAdd = async (categoryData) => {
+  const handleAdd = async (categoryData: string) => {
     try {
-      const title = categoryData;
-      const slug = categoryData
+      const title = categoryData.trim();
+      const slug = title
         .toLowerCase()
         .trim()
         .replace(/[^\w\s-]/g, "")
         .replace(/[\s_-]+/g, "-")
         .replace(/^-+|-+$/g, "");
-
+      if (!title || !slug) {
+        throw new Error("카테고리를 입력해주세요.");
+      }
       setIsLoading(true);
       const res = await fetch("/api/categories", {
         method: "POST",
@@ -54,13 +64,16 @@ const CategoryListClient = ({ initialCategories }) => {
       });
 
       if (!res.ok) {
-        throw new Error("카테고리 추가 실패");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `카테고리 추가 실패 (${res.status})`
+        );
       }
 
       await fetchCategories();
       setIsAddModalOpen(false);
       return { success: true };
-    } catch (error) {
+    } catch (error: any) {
       console.error("카테고리 추가 오류:", error);
       setError(error.message);
       return { success: false, error: error.message };
@@ -69,7 +82,7 @@ const CategoryListClient = ({ initialCategories }) => {
     }
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDelete = async (categoryId: string) => {
     try {
       setIsLoading(true);
       const selectedCategory = categories.find((cat) => cat.id === categoryId);
@@ -84,15 +97,15 @@ const CategoryListClient = ({ initialCategories }) => {
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         console.error("삭제 응답 에러:", res.status, errorData);
-        throw new Error(errorData.message || `카테고리 삭제 실패 (${res.status})`);
+        throw new Error(
+          errorData.message || `카테고리 삭제 실패 (${res.status})`
+        );
       }
-
-      const data = await res.json();
 
       await fetchCategories();
       setIsDeleteModalOpen(false);
       return { success: true };
-    } catch (error) {
+    } catch (error: any) {
       console.error("카테고리 삭제 오류:", error);
       setError(error.message || "카테고리 삭제 중 문제가 발생했습니다");
       return { success: false, error: error.message };
@@ -101,29 +114,30 @@ const CategoryListClient = ({ initialCategories }) => {
     }
   };
 
-  const scrollLeftHandler = () => {
+  const scrollLeftHandler = (): void => {
     if (sliderRef.current) {
       sliderRef.current.scrollLeft -= 200;
     }
   };
 
-  const scrollRightHandler = () => {
+  const scrollRightHandler = (): void => {
     if (sliderRef.current) {
       sliderRef.current.scrollLeft += 200;
     }
   };
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>): void => {
+    if (!sliderRef.current) return;
     setIsDragging(true);
     setStartX(e.pageX - sliderRef.current.offsetLeft);
     setScrollLeft(sliderRef.current.scrollLeft);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (): void => {
     setIsDragging(false);
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>): void => {
     if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - sliderRef.current.offsetLeft;
@@ -131,13 +145,13 @@ const CategoryListClient = ({ initialCategories }) => {
     sliderRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  const handleTouchStart = (e) => {
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>): void => {
     setIsDragging(true);
     setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
     setScrollLeft(sliderRef.current.scrollLeft);
   };
 
-  const handleTouchMove = (e) => {
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>): void => {
     if (!isDragging) return;
     const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
     const walk = (x - startX) * 2;
@@ -149,13 +163,20 @@ const CategoryListClient = ({ initialCategories }) => {
       {session?.status === "authenticated" && (
         <div className={styles.menuContainer}>
           <div className={styles.menuWrapper}>
-            <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
+            <button
+              className={styles.menuButton}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
               카테고리 관리
             </button>
             {menuOpen && (
               <div className={styles.menu}>
-                <button onClick={() => setIsAddModalOpen(true)}>추가하기</button>
-                <button onClick={() => setIsDeleteModalOpen(true)}>삭제하기</button>
+                <button onClick={() => setIsAddModalOpen(true)}>
+                  추가하기
+                </button>
+                <button onClick={() => setIsDeleteModalOpen(true)}>
+                  삭제하기
+                </button>
                 <AddCategoryModal
                   isOpen={isAddModalOpen}
                   onClose={() => setIsAddModalOpen(false)}
@@ -195,17 +216,20 @@ const CategoryListClient = ({ initialCategories }) => {
           onTouchMove={handleTouchMove}
         >
           <div className={styles.categories}>
-            <Link href="/blog" className={`${styles.category} ${styles.allCategory}`}>
+            <Link
+              href="/blog"
+              className={`${styles.category} ${styles.allCategory}`}
+            >
               <span className={styles.categoryText}>All</span>
             </Link>
-            {categories?.map((item) => {
+            {categories?.map((item: Category) => {
               return (
                 <Link
                   href={`/blog?cat=${item.slug}`}
                   className={`${styles.category} ${
                     item.slug === "uncategorized" ? styles.uncategorized : ""
                   }`}
-                  key={item._id || item.id}
+                  key={item.id || item.id}
                 >
                   <span className={styles.categoryText}>{item.title}</span>
                 </Link>

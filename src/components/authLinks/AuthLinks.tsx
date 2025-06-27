@@ -9,7 +9,7 @@ const AuthLinks = () => {
   const { status } = useSession();
   return (
     <>
-      {status === "notauthenticated" ? (
+      {status === "unauthenticated" ? (
         <Link href="/login" className={styles.link}>
           LOGIN
         </Link>
@@ -18,7 +18,7 @@ const AuthLinks = () => {
           <Link href="/write" className={styles.link}>
             WRITE
           </Link>
-          <span className={styles.link} onClick={signOut}>
+          <span className={styles.link} onClick={() => signOut()}>
             LOGOUT
           </span>
         </>
@@ -32,8 +32,8 @@ const AuthLinks = () => {
         <div className={styles.responsiveMenu}>
           <Link href="/tags">TAGS</Link>
           <Link href="/">About</Link>
-          <Link href="/"></Link>
-          {status === "notauthenticated" ? (
+
+          {status === "unauthenticated" ? (
             <Link href="/login">Login</Link>
           ) : (
             <>

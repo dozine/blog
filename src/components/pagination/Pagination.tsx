@@ -2,20 +2,21 @@
 import React from "react";
 import styles from "./pagination.module.css";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { PaginationProps } from "@/types";
 
-const Pagination = ({ page, totalPages }) => {
+const Pagination = ({ page, totalPages }: PaginationProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const handlePagination = (newPage) => {
+  const handlePagination = (newPage: number): void => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", newPage);
+    params.set("page", newPage.toString());
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const getPageNumbers = () => {
-    const pages = [];
+  const getPageNumbers = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
     const maxPagesToShow = 5;
 
     if (totalPages <= maxPagesToShow) {
@@ -26,7 +27,14 @@ const Pagination = ({ page, totalPages }) => {
       if (page <= 3) {
         pages.push(1, 2, 3, 4, "...", totalPages);
       } else if (page >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
       } else {
         pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
       }
@@ -36,12 +44,12 @@ const Pagination = ({ page, totalPages }) => {
 
   return (
     <div className={styles.container}>
-      {getPageNumbers().map((p, index) =>
+      {getPageNumbers().map((p: number | string, index: number) =>
         typeof p === "number" ? (
           <button
             key={index}
             className={`${styles.button} ${page === p ? styles.active : ""}`}
-            onClick={() => handlePagination(p)}
+            onClick={() => handlePagination(p as number)}
           >
             {p}
           </button>

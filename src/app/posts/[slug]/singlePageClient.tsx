@@ -6,16 +6,17 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import PostDeleteModal from "@/components/modal/PostDeleteModal";
 import styles from "./singlePage.module.css";
+import { SinglePageClientProps } from "@/types";
 
-const SinglePageClient = ({ data, slug }) => {
+const SinglePageClient = ({ data, slug }: SinglePageClientProps) => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   // 작성자인지 확인
-  const isAuthor = session?.user?.email === data?.user?.email;
-  const isAuthenticated = status === "authenticated";
+  const isAuthor: boolean = session?.user?.email === data?.user?.email;
+  const isAuthenticated: boolean = status === "authenticated";
 
   const handleDelete = async () => {
     if (!slug) return;
@@ -29,7 +30,7 @@ const SinglePageClient = ({ data, slug }) => {
       alert("삭제되었습니다.");
       router.push("/blog");
       router.refresh();
-    } catch (err) {
+    } catch (err: any) {
       console.error("삭제 오류", err);
       alert("삭제 중 오류가 발생했습니다.");
     } finally {
@@ -49,11 +50,15 @@ const SinglePageClient = ({ data, slug }) => {
 
           <div className={styles.userContainer}>
             <div className={styles.user}>
-              {data.user?.img && (
+              {data.user?.image && (
                 <div className={styles.userImageContainer}>
                   <Image
-                    src={data.user.img}
-                    alt={data.user.name ? `${data.user.name}의 아바타` : "사용자 아바타"}
+                    src={data.user.image}
+                    alt={
+                      data.user.name
+                        ? `${data.user.name}의 아바타`
+                        : "사용자 아바타"
+                    }
                     fill
                     className={styles.avatar}
                     sizes="(max-width: 768px) 40px, 50px"
@@ -92,7 +97,10 @@ const SinglePageClient = ({ data, slug }) => {
                       </button>
                       {menuOpen && (
                         <div className={styles.menu}>
-                          <button className={styles.menuItem} onClick={handleEdit}>
+                          <button
+                            className={styles.menuItem}
+                            onClick={handleEdit}
+                          >
                             수정하기
                           </button>
                           <button
@@ -130,7 +138,10 @@ const SinglePageClient = ({ data, slug }) => {
       {/* 포스트 콘텐츠 */}
       <div className={styles.content}>
         <div className={styles.post}>
-          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data.desc }} />
+          <div
+            className="ql-editor"
+            dangerouslySetInnerHTML={{ __html: data.desc }}
+          />
         </div>
       </div>
 

@@ -4,15 +4,18 @@ import Image from "next/image";
 import styles from "./themeToggle.module.css";
 import { useContext } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
+import { ThemeContextType } from "@/types";
 
 const ThemeToggle = () => {
-  const { toggle, theme } = useContext(ThemeContext);
-  const claudeOrange = "#f9a03f";
+  const { toggle, theme } = useContext<ThemeContextType>(ThemeContext);
+  const claudeOrange: string = "#f9a03f";
   return (
     <button
       className={styles.button}
       onClick={toggle}
-      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={
+        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+      }
       style={{
         borderColor: claudeOrange,
         color: theme === "dark" ? claudeOrange : "#333",

@@ -1,8 +1,11 @@
-import Link from "next/link";
-import styles from "./categoryList.module.css";
 import dynamic from "next/dynamic";
+import { Category } from "@prisma/client";
+import { CategoryListClientProps } from "@/types";
 
-const CategoryListClient = dynamic(() => import("./CategoryListClient"), {});
+const CategoryListClient = dynamic<CategoryListClientProps>(
+  () => import("./CategoryListClient"),
+  {}
+);
 
 const CategoryListServer = async () => {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -14,11 +17,15 @@ const CategoryListServer = async () => {
   });
 
   if (!res.ok) {
-    console.error("Failed to fetch categories on server:", res.status, res.statusText);
+    console.error(
+      "Failed to fetch categories on server:",
+      res.status,
+      res.statusText
+    );
     return <p>카테고리를 불러오는 데 실패했습니다.</p>;
   }
 
-  const categories = await res.json();
+  const categories: Category[] = await res.json();
 
   return <CategoryListClient initialCategories={categories} />;
 };

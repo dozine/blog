@@ -1,13 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../modal/Modal";
+import { DeleteCategoryModalProps } from "@/types";
+import { Category } from "@prisma/client";
 
-const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+const DeleteCategoryModal = ({
+  isOpen,
+  onClose,
+  onDelete,
+  categories,
+}: DeleteCategoryModalProps) => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  // 모달이 닫힐 때 상태 초기화
   useEffect(() => {
     if (!isOpen) {
       setSelectedCategoryId("");
@@ -15,11 +21,16 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
     }
   }, [isOpen]);
 
-  const handleDeleteSubmit = async () => {
-    if (!selectedCategoryId) return;
+  const handleDeleteSubmit = async (): Promise<void> => {
+    if (!selectedCategoryId) {
+      setError("삭제할 카테고리를 선택해주세요.");
+      return;
+    }
 
     // 선택한 카테고리가 uncategorized인지 확인
-    const selectedCategory = categories?.find((cat) => (cat._id || cat.id) === selectedCategoryId);
+    const selectedCategory = categories?.find(
+      (cat) => cat.id === selectedCategoryId
+    );
 
     if (selectedCategory?.slug === "uncategorized") {
       setError("'미분류' 카테고리는 삭제할 수 없습니다.");
@@ -36,7 +47,7 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
         setSelectedCategoryId("");
         onClose();
       }
-    } catch (err) {
+    } catch (err: any) {
       setError("삭제 중 오류가 발생했습니다.");
       console.error("카테고리 삭제 오류:", err);
     } finally {
@@ -49,7 +60,7 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
       <h3>삭제할 카테고리를 선택해주세요</h3>
       <select
         value={selectedCategoryId}
-        onChange={(e) => {
+        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
           setSelectedCategoryId(e.target.value);
           setError(""); // 새 선택 시 오류 메시지 초기화
         }}
@@ -64,8 +75,8 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
         <option value="">선택해주세요</option>
         {categories
           ?.filter((cat) => cat.slug !== "uncategorized")
-          .map((category) => (
-            <option key={category._id || category.id} value={category._id || category.id}>
+          .map((category: Category) => (
+            <option key={category.id} value={category.id}>
               {category.title}
             </option>
           ))}
@@ -93,7 +104,8 @@ const DeleteCategoryModal = ({ isOpen, onClose, onDelete, categories }) => {
           onClick={handleDeleteSubmit}
           disabled={!selectedCategoryId || isLoading}
           style={{
-            cursor: !selectedCategoryId || isLoading ? "not-allowed" : "pointer",
+            cursor:
+              !selectedCategoryId || isLoading ? "not-allowed" : "pointer",
           }}
         >
           {isLoading ? "처리중..." : "삭제"}
