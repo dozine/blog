@@ -1,11 +1,17 @@
 import { getAuthSession } from "@/app/utils/auth";
 import prisma from "@/app/utils/connect";
-import { Params, PostWithFormattedTags, UpdatePostBody } from "@/types";
+import { PostWithFormattedTags, UpdatePostBody } from "@/types";
 import { Post, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+interface RoueteParams {
+  params: {
+    slug: string;
+  };
+}
+
 //GET SINGLE POST
-export const GET = async (req: NextRequest, params: Params) => {
+export const GET = async (req: NextRequest, params: RoueteParams) => {
   const { slug } = params.params;
   const session = await getAuthSession();
   if (!slug || slug === "undefined") {
@@ -59,7 +65,7 @@ export const GET = async (req: NextRequest, params: Params) => {
 };
 
 //DELETE POST
-export const DELETE = async (req: NextRequest, params: Params) => {
+export const DELETE = async (req: NextRequest, params: RoueteParams) => {
   const session = await getAuthSession();
   if (!session?.user?.email) {
     return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
@@ -107,7 +113,7 @@ export const DELETE = async (req: NextRequest, params: Params) => {
   }
 };
 
-export const PUT = async (req: NextRequest, params: Params) => {
+export const PUT = async (req: NextRequest, params: RoueteParams) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email) {
