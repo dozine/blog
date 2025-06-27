@@ -11,8 +11,8 @@ interface RoueteParams {
 }
 
 //GET SINGLE POST
-export const GET = async (req: NextRequest, params: RoueteParams) => {
-  const { slug } = params.params;
+export const GET = async (req: NextRequest, { params }: RoueteParams) => {
+  const { slug } = params;
   const session = await getAuthSession();
   if (!slug || slug === "undefined") {
     return new NextResponse(JSON.stringify({ message: "Invalid post slug" }), {
@@ -65,7 +65,7 @@ export const GET = async (req: NextRequest, params: RoueteParams) => {
 };
 
 //DELETE POST
-export const DELETE = async (req: NextRequest, params: RoueteParams) => {
+export const DELETE = async (req: NextRequest, { params }: RoueteParams) => {
   const session = await getAuthSession();
   if (!session?.user?.email) {
     return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
@@ -73,7 +73,7 @@ export const DELETE = async (req: NextRequest, params: RoueteParams) => {
       headers: { "Content-Type": "application/json" },
     });
   }
-  const { slug } = params.params;
+  const { slug } = params;
   try {
     const post: Post | null = await prisma.post.findUnique({
       where: { slug },
@@ -113,7 +113,7 @@ export const DELETE = async (req: NextRequest, params: RoueteParams) => {
   }
 };
 
-export const PUT = async (req: NextRequest, params: RoueteParams) => {
+export const PUT = async (req: NextRequest, { params }: RoueteParams) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email) {
@@ -123,7 +123,7 @@ export const PUT = async (req: NextRequest, params: RoueteParams) => {
       });
     }
 
-    const { slug } = params.params;
+    const { slug } = params;
     if (!slug || slug === "undefined") {
       return new NextResponse(JSON.stringify({ message: "Invalid post slug" }), {
         status: 400,
