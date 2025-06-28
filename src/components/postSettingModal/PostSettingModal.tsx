@@ -2,8 +2,8 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import styles from "./postSettingModal.module.css";
 import { PostSettingModalProps } from "@/types";
-import { TagWithCount } from "@/types/tag";
 import { Category, Tag } from "@prisma/client";
+import { TagWithPostCount } from "@/types/tag";
 const PostSettingModal = ({
   isOpen,
   onClose,
@@ -20,7 +20,7 @@ const PostSettingModal = ({
   setAvailableTags,
   onPublish,
 }: PostSettingModalProps) => {
-  const [filteredTags, setFilteredTags] = useState<TagWithCount[]>([]);
+  const [filteredTags, setFilteredTags] = useState<TagWithPostCount[]>([]);
   const [showTagSuggestions, setShowTagSuggestions] = useState<boolean>(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,7 +43,7 @@ const PostSettingModal = ({
     }
   }, [tagInput, availableTags, tags]);
 
-  const addTag = (tag: TagWithCount): void => {
+  const addTag = (tag: TagWithPostCount): void => {
     if (tags.length >= 5) {
       alert("태그는 최대 5개까지만 추가할 수 있습니다.");
       return;
@@ -93,7 +93,7 @@ const PostSettingModal = ({
         throw new Error(errorData.message || "태그 생성에 실패했습니다.");
       }
 
-      const newTag: TagWithCount = await res.json();
+      const newTag: TagWithPostCount = await res.json();
       addTag(newTag);
       setAvailableTags([...availableTags, newTag]);
     } catch (err: any) {
@@ -165,7 +165,7 @@ const PostSettingModal = ({
             {/* 태그 제안 목록 */}
             {showTagSuggestions && filteredTags.length > 0 && (
               <div className={styles.tagSuggestions}>
-                {filteredTags.slice(0, 5).map((tag: TagWithCount) => (
+                {filteredTags.slice(0, 5).map((tag: TagWithPostCount) => (
                   <div key={tag.id} className={styles.tagSuggestion} onClick={() => addTag(tag)}>
                     {tag.name}
                   </div>

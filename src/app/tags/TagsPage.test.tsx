@@ -44,9 +44,7 @@ describe("TagsPage", () => {
         return null;
       });
 
-      render(
-        <TagsPage searchParams={Promise.resolve({ page: "1", tags: "" })} />
-      );
+      render(<TagsPage searchParams={Promise.resolve({ page: "1", tags: "" })} />);
 
       expect(screen.getByTestId("mock-tag-list")).toBeInTheDocument();
       expect(screen.getByTestId("mock-card-list")).toBeInTheDocument();
@@ -122,9 +120,7 @@ describe("TagsPage", () => {
         if (key === "tags") return "react.javascript";
         return null;
       });
-      (mockSearchParams.toString as jest.Mock).mockReturnValue(
-        "page=1&tags=react.javascript"
-      );
+      (mockSearchParams.toString as jest.Mock).mockReturnValue("page=1&tags=react.javascript");
 
       originalURLSearchParams = global.URLSearchParams;
     });
@@ -144,23 +140,16 @@ describe("TagsPage", () => {
       };
 
       // URLSearchParams 생성자 모킹
-      global.URLSearchParams = jest.fn(
-        () => mockParams
-      ) as unknown as typeof URLSearchParams;
+      global.URLSearchParams = jest.fn(() => mockParams) as unknown as typeof URLSearchParams;
 
       render(<TagsPage searchParams={Promise.resolve({})} />);
 
       const newTagButton = screen.getByTestId("new-tag-button");
       await user.click(newTagButton);
 
-      expect(mockParams.set).toHaveBeenCalledWith(
-        "tags",
-        "react.javascript.newTag"
-      );
+      expect(mockParams.set).toHaveBeenCalledWith("tags", "react.javascript.newTag");
       expect(mockParams.set).toHaveBeenCalledWith("page", "1");
-      expect(mockPush).toHaveBeenCalledWith(
-        "/tags?page=1&tags=react.javascript.newTag"
-      );
+      expect(mockPush).toHaveBeenCalledWith("/tags?page=1&tags=react.javascript.newTag");
     });
 
     test("기존 태그를 제거한다", async () => {
@@ -173,9 +162,7 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1&tags=javascript"),
       };
 
-      global.URLSearchParams = jest.fn(
-        () => mockParams
-      ) as unknown as typeof URLSearchParams;
+      global.URLSearchParams = jest.fn(() => mockParams) as unknown as typeof URLSearchParams;
 
       render(<TagsPage searchParams={Promise.resolve({})} />);
 
@@ -204,9 +191,7 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1"),
       };
 
-      global.URLSearchParams = jest.fn(
-        () => mockParams
-      ) as unknown as typeof URLSearchParams;
+      global.URLSearchParams = jest.fn(() => mockParams) as unknown as typeof URLSearchParams;
 
       render(<TagsPage searchParams={Promise.resolve({})} />);
 
@@ -228,9 +213,7 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1&tags=javascript"),
       };
 
-      global.URLSearchParams = jest.fn(
-        () => mockParams
-      ) as unknown as typeof URLSearchParams;
+      global.URLSearchParams = jest.fn(() => mockParams) as unknown as typeof URLSearchParams;
 
       render(<TagsPage searchParams={Promise.resolve({})} />);
 

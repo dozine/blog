@@ -6,11 +6,7 @@ interface MockReactQuillProps {
   onChange?: (value: string) => void;
 }
 
-const MockReactQuill: React.FC<MockReactQuillProps> = ({
-  value,
-  onChange,
-  ...props
-}) => (
+const MockReactQuill: React.FC<MockReactQuillProps> = ({ value, onChange, ...props }) => (
   <div data-testid="mock-react-quill">
     <textarea
       data-testid="quill-textarea"
