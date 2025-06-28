@@ -1,7 +1,12 @@
 import React from "react";
 import { jest } from "@jest/globals";
 
-const MockTagList = jest.fn((props) => {
+interface MockTagListProps {
+  selectedTags?: string[];
+  onTagClick?: (tag: string) => void;
+}
+
+const MockTagList = jest.fn((props: MockTagListProps) => {
   const tags = props.selectedTags || [];
 
   return (
@@ -11,7 +16,6 @@ const MockTagList = jest.fn((props) => {
           {tag}
         </span>
       ))}
-      {/* 테스트에서 사용할 버튼들 추가 */}
       <button
         data-testid="new-tag-button"
         onClick={() => props.onTagClick && props.onTagClick("newTag")}

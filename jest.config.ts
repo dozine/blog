@@ -1,4 +1,6 @@
-module.exports = {
+import type { Config } from "jest";
+
+const config: Config = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   moduleNameMapper: {
@@ -8,17 +10,21 @@ module.exports = {
       "<rootDir>/src/__mocks__/fileMock.js",
   },
   transform: {
-    "^.+\\.(js|jsx)$": ["babel-jest", { configFile: "./babel-jest.config.js" }],
+    "^.+\\.(js|jsx|ts|tsx)$": [
+      "babel-jest",
+      { configFile: "./babel-jest.config.js" },
+    ],
   },
   moduleDirectories: ["node_modules", "<rootDir>"],
   testPathIgnorePatterns: ["/node_modules/", "/build/"],
   collectCoverageFrom: [
-    "src/**/*.{js,jsx}",
+    "src/**/*.{js,jsx,ts,tsx}",
     "!src/index.js",
     "!src/reportWebVitals.js",
   ],
   testMatch: [
-    "<rootDir>/src/**/*.test.{js,jsx}",
-    "<rootDir>/src/**/*.spec.{js,jsx}",
+    "<rootDir>/src/**/*.test.{js,jsx,ts,tsx}",
+    "<rootDir>/src/**/*.spec.{js,jsx,ts,tsx}",
   ],
+  moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json", "node"],
 };

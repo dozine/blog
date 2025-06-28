@@ -1,7 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import TagsPage from "./page";
+
 import { useSearchParams, useRouter } from "next/navigation";
+import TagsPage from "./page";
 import TagList from "@/components/tagList/TagList";
 import CardList from "@/components/cardList/CardList";
 
@@ -22,38 +23,38 @@ jest.mock("@/components/cardList/CardList", () => ({
 
 describe("TagsPage", () => {
   const mockPush = jest.fn();
-  const mockSearchParams = new URLSearchParams();
+  let mockSearchParams: URLSearchParams;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useRouter.mockReturnValue({
+    (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     });
-    useSearchParams.get = jest.fn();
+    mockSearchParams = new URLSearchParams();
+    mockSearchParams.get = jest.fn();
     mockSearchParams.toString = jest.fn(() => "");
-    useSearchParams.mockReturnValue(mockSearchParams);
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
   });
-  mockSearchParams.get = jest.fn();
-  mockSearchParams.toString = jest.fn(() => "");
-  useSearchParams.mockReturnValue(mockSearchParams);
 
   describe("초기 렌더링 ", () => {
     test("기본 구조가 올바르게 렌더링된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "";
         return null;
       });
 
-      render(<TagsPage />);
+      render(
+        <TagsPage searchParams={Promise.resolve({ page: "1", tags: "" })} />
+      );
 
       expect(screen.getByTestId("mock-tag-list")).toBeInTheDocument();
       expect(screen.getByTestId("mock-card-list")).toBeInTheDocument();
     });
 
     test("URL파라미터가 없을 때 기본값으로 설정된다.", () => {
-      mockSearchParams.get.mockReturnValue(null);
-      render(<TagsPage />);
+      (mockSearchParams.get as jest.Mock).mockReturnValue(null);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
       expect(TagList).toHaveBeenCalledWith(
         expect.objectContaining({
           selectedTags: [],
@@ -65,24 +66,24 @@ describe("TagsPage", () => {
 
   describe("URL 파라미터 파싱", () => {
     test("page 파라미터가 올바르게 파싱된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "3";
         if (key === "tags") return "";
         return null;
       });
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
       expect(screen.getByTestId("mock-tag-list")).toBeInTheDocument();
     });
 
     test("tags 파라미터가 올바르게 파싱된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "react.javascript.typescript";
         return null;
       });
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       expect(TagList).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -93,13 +94,13 @@ describe("TagsPage", () => {
     });
 
     test("빈 태그가 필터링된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "react..javascript.";
         return null;
       });
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       expect(TagList).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -112,15 +113,24 @@ describe("TagsPage", () => {
 
   describe("태그 클릭 핸들러", () => {
     let user;
+    let originalURLSearchParams: typeof URLSearchParams;
 
     beforeEach(() => {
       user = userEvent.setup();
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "react.javascript";
         return null;
       });
-      mockSearchParams.toString.mockReturnValue("page=1&tags=react.javascript");
+      (mockSearchParams.toString as jest.Mock).mockReturnValue(
+        "page=1&tags=react.javascript"
+      );
+
+      originalURLSearchParams = global.URLSearchParams;
+    });
+
+    afterEach(() => {
+      global.URLSearchParams = originalURLSearchParams;
     });
 
     test("새로운 태그를 추가한다", async () => {
@@ -134,16 +144,23 @@ describe("TagsPage", () => {
       };
 
       // URLSearchParams 생성자 모킹
-      global.URLSearchParams = jest.fn(() => mockParams);
+      global.URLSearchParams = jest.fn(
+        () => mockParams
+      ) as unknown as typeof URLSearchParams;
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       const newTagButton = screen.getByTestId("new-tag-button");
       await user.click(newTagButton);
 
-      expect(mockParams.set).toHaveBeenCalledWith("tags", "react.javascript.newTag");
+      expect(mockParams.set).toHaveBeenCalledWith(
+        "tags",
+        "react.javascript.newTag"
+      );
       expect(mockParams.set).toHaveBeenCalledWith("page", "1");
-      expect(mockPush).toHaveBeenCalledWith("/tags?page=1&tags=react.javascript.newTag");
+      expect(mockPush).toHaveBeenCalledWith(
+        "/tags?page=1&tags=react.javascript.newTag"
+      );
     });
 
     test("기존 태그를 제거한다", async () => {
@@ -156,9 +173,11 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1&tags=javascript"),
       };
 
-      global.URLSearchParams = jest.fn(() => mockParams);
+      global.URLSearchParams = jest.fn(
+        () => mockParams
+      ) as unknown as typeof URLSearchParams;
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       const reactTagButton = screen.getByTestId("selected-tag-react");
       await user.click(reactTagButton);
@@ -169,7 +188,7 @@ describe("TagsPage", () => {
     });
 
     test("마지막 태그를 제거하면 tags 파라미터가 삭제된다", async () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "react";
         return null;
@@ -185,9 +204,11 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1"),
       };
 
-      global.URLSearchParams = jest.fn(() => mockParams);
+      global.URLSearchParams = jest.fn(
+        () => mockParams
+      ) as unknown as typeof URLSearchParams;
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       const reactTagButton = screen.getByTestId("selected-tag-react");
       await user.click(reactTagButton);
@@ -207,9 +228,11 @@ describe("TagsPage", () => {
         toString: jest.fn(() => "page=1&tags=javascript"),
       };
 
-      global.URLSearchParams = jest.fn(() => mockParams);
+      global.URLSearchParams = jest.fn(
+        () => mockParams
+      ) as unknown as typeof URLSearchParams;
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       // 이미 존재하는 태그를 클릭 (제거됨)
       const reactTagButton = screen.getByTestId("selected-tag-react");
@@ -221,13 +244,13 @@ describe("TagsPage", () => {
 
   describe("컴포넌트 통합", () => {
     test("TagList에 올바른 props가 전달된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return "react.vue";
         return null;
       });
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       expect(TagList).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -239,9 +262,9 @@ describe("TagsPage", () => {
     });
 
     test("CardList가 렌더링된다", () => {
-      mockSearchParams.get.mockReturnValue(null);
+      (mockSearchParams.get as jest.Mock).mockReturnValue(null);
 
-      render(<TagsPage />);
+      render(<TagsPage searchParams={Promise.resolve({})} />);
 
       expect(CardList).toHaveBeenCalled();
       expect(screen.getByTestId("mock-card-list")).toBeInTheDocument();
@@ -250,27 +273,24 @@ describe("TagsPage", () => {
 
   describe("에러 처리", () => {
     test("잘못된 page 파라미터는 1로 기본값 설정된다", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "invalid";
         if (key === "tags") return "";
         return null;
       });
 
-      render(<TagsPage />);
-
-      // 컴포넌트가 정상적으로 렌더링되는지 확인
+      render(<TagsPage searchParams={Promise.resolve({})} />);
       expect(screen.getByTestId("mock-tag-list")).toBeInTheDocument();
     });
 
     test("null tags 파라미터 처리", () => {
-      mockSearchParams.get.mockImplementation((key) => {
+      (mockSearchParams.get as jest.Mock).mockImplementation((key) => {
         if (key === "page") return "1";
         if (key === "tags") return null;
         return null;
       });
 
-      render(<TagsPage />);
-
+      render(<TagsPage searchParams={Promise.resolve({})} />);
       expect(TagList).toHaveBeenCalledWith(
         expect.objectContaining({
           selectedTags: [],
