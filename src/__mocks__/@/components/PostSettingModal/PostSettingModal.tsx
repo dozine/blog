@@ -1,6 +1,13 @@
 import React from "react";
 import { jest } from "@jest/globals";
-const MockPostSettingModal = jest.fn((props) => {
+
+interface MockPostSettingModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onPublish: () => void;
+}
+
+const MockPostSettingModal = jest.fn((props: MockPostSettingModalProps) => {
   if (!props.isOpen) return null;
   return (
     <div data-testid="mock-post-setting-modal">

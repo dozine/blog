@@ -1,7 +1,12 @@
 // __mocks__/react-quill-new.js
 import React from "react";
 
-const MockReactQuill = ({ value, onChange, ...props }) => (
+interface MockReactQuillProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+const MockReactQuill: React.FC<MockReactQuillProps> = ({ value, onChange, ...props }) => (
   <div data-testid="mock-react-quill">
     <textarea
       data-testid="quill-textarea"

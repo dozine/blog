@@ -6,6 +6,26 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const POST_PER_PAGE = 10;
+type PostWithRelations = Prisma.PostGetPayload<{
+  include: {
+    user: true;
+    tags: {
+      include: {
+        tag: true;
+      };
+    };
+  };
+}>;
+
+type FormattedPost = Omit<PostWithRelations, "tags" | "user"> & {
+  tags: Tag[];
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+    image: string | null;
+  };
+};
 
 export const GET = async (req: NextRequest) => {
   const session = await getAuthSession();
@@ -63,13 +83,10 @@ export const GET = async (req: NextRequest) => {
   };
 
   try {
-    type PostsResult = Prisma.PostGetPayload<typeof query>[];
-    const [posts, count]: [PostsResult, number] = await prisma.$transaction([
-      prisma.post.findMany(query),
-      prisma.post.count({ where: query.where }),
-    ]);
+    const posts = (await prisma.post.findMany(query)) as PostWithRelations[];
+    const count = await prisma.post.count({ where: query.where });
 
-    const formattedPosts: PostWithFormattedTags[] = posts.map((post) => ({
+    const formattedPosts: FormattedPost[] = posts.map((post) => ({
       ...post,
       tags: post.tags.map((pt) => pt.tag),
       user: {

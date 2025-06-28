@@ -3,10 +3,14 @@ import CardList from "@/components/cardList/CardList";
 import TagsPageClient from "./tagsPageClient";
 import { TagsPageSearchParams, TagWithPostCount } from "@/types/tag";
 import { Tag } from "@prisma/client";
-
-const TagsPage = async ({ searchParams }: { searchParams: TagsPageSearchParams }) => {
-  const page: number = Number(searchParams.page) || 1;
-  const rawTags: string = searchParams.tags || "";
+const TagsPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; tags?: string }>;
+}) => {
+  const params = await searchParams;
+  const page: number = Number(params.page) || 1;
+  const rawTags: string = params.tags || "";
   const tags: string[] = rawTags ? rawTags.split(".").filter((tag) => tag !== "") : [];
 
   let allTags: TagWithPostCount[] = [];

@@ -5,5 +5,6 @@ module.exports = {
 
     // React JSX 문법 지원
     ["@babel/preset-react", { runtime: "automatic" }],
+    "@babel/preset-typescript",
   ],
 };
